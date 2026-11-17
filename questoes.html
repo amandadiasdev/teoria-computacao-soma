@@ -1,0 +1,358 @@
+<!doctype html>
+<!-- Vinte questões de marcar sobre os quatro modelos da soma 2 + 1 = 3 (Máquina de Turing, Funções de Kleene, Cálculo Lambda e Programas). Cada resposta é corrigida na hora, com explicação e link para o glossário. Material do Trabalho Final de Teoria da Computação (AL0349). -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questões de marcar | Teoria da Computação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Math&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="estilo.css" />
+  </head>
+  <body class="m-glos">
+    <nav class="back" aria-label="Navegação">
+      <a href="./">← Voltar<span class="long"> às quatro formas</span></a>
+      <span class="score" id="score" aria-live="polite">0 de 20</span>
+      <a href="glossario.html">Glossário</a>
+    </nav>
+    <div class="wrap">
+      <header class="top">
+        <div class="strip" aria-hidden="true">
+          <span class="head">q0</span><i>⊛</i><i class="f">1</i
+          ><i class="f">1</i><i class="f">+</i><i class="f">1</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i>
+        </div>
+        <h1>Questões de marcar</h1>
+        <p class="lead">
+          Vinte questões, cinco por modelo, todas em volta da soma 2 + 1 = 3.
+          Clique numa alternativa para ver se acertou e por quê. O placar fica
+          na barra do topo.
+        </p>
+        <p class="meta">
+          <span>Amanda Dias · Matrícula 2510101045</span
+          ><span>Teoria da Computação (AL0349) · 2026/2</span>
+        </p>
+      </header>
+
+      <div id="quiz"></div>
+
+      <div class="card sun" id="end" hidden>
+        <p id="endText"></p>
+        <button id="again" class="main">Refazer</button>
+      </div>
+
+      <nav class="next" aria-label="Fim da página">
+        <a href="./">← Voltar às quatro formas</a>
+        <a href="glossario.html">Glossário →</a>
+      </nav>
+      <footer>
+        Fontes: Texto-Aulas 16 a 19, Teoria da Computação (AL0349), Prof. Dr.
+        Paulo Silas Severo de Souza, Unipampa, 2026/2. Questões feitas para o
+        Trabalho Final por Amanda Dias (2510101045).
+      </footer>
+    </div>
+
+    <script>
+      // Cada questão tem o modelo (cor e seção), o enunciado, as alternativas,
+      // o índice da certa, a explicação e o termo do glossário.
+      const SECS = {
+        mt: ["1", "Máquina de Turing", "--blue"],
+        kleene: ["2", "Funções Recursivas de Kleene", "--teal"],
+        lambda: ["3", "Cálculo Lambda", "--grape"],
+        programas: ["4", "Programas", "--coral"],
+      };
+      const QS = [
+        {
+          s: "mt",
+          q: "A máquina da soma começa com a fita ⊛11+1βββ. Que conta está escrita nela?",
+          o: ["11 + 1", "2 + 1", "3 + 1", "21"],
+          c: 1,
+          e: "Os números estão em unário, então cada 1 vale uma unidade. 11 é 2, e 1 é 1.",
+          g: "fita",
+        },
+        {
+          s: "mt",
+          q: "Qual regra da função de transição troca o + por 1?",
+          o: [
+            "Π(q0, ⊛) = (q1, ⊛, D)",
+            "Π(q2, β) = (q3, β, E)",
+            "Π(q1, +) = (q2, 1, D)",
+            "Π(q3, 1) = (qf, β, E)",
+          ],
+          c: 2,
+          e: "Em q1, lendo +, a máquina escreve 1, anda para a direita e vai para q2. É a regra 3 do simulador.",
+          g: "funcao-de-transicao",
+        },
+        {
+          s: "mt",
+          q: "Por que a regra 6, Π(q3, 1) = (qf, β, E), apaga um 1 antes de parar?",
+          o: [
+            "Porque o + virou 1, então a fita ficou com um 1 a mais",
+            "Porque o β no fim da fita vale 1",
+            "Para marcar o fim da fita para a próxima conta",
+            "Para voltar ao estado inicial q0",
+          ],
+          c: 0,
+          e: "11+1 vira 1111 quando o + é trocado. Apagar um 1 deixa 111, que é 3.",
+          g: "funcao-de-transicao",
+        },
+        {
+          s: "mt",
+          q: "O que significa dizer que uma Máquina de Turing decide uma linguagem?",
+          o: [
+            "Ela aceita as palavras da linguagem e pode entrar em loop nas outras",
+            "Ela sempre para, aceitando as palavras da linguagem e rejeitando as outras",
+            "Ela só aceita e nunca rejeita",
+            "Ela para só quando a fita acaba",
+          ],
+          c: 1,
+          e: "Decidir exige parar sempre, com sim ou com não. Aceitar e talvez entrar em loop é só reconhecer.",
+          g: "decidir",
+        },
+        {
+          s: "mt",
+          q: "Sobre o Problema da Parada (PARADA), qual afirmação está correta?",
+          o: [
+            "Um simulador decide PARADA se esperar passos suficientes, como 1000",
+            "PARADA só é indecidível para máquinas com fita finita",
+            "Nenhuma máquina decide PARADA",
+            "PARADA é decidível, mas não é reconhecível",
+          ],
+          c: 2,
+          e: "Qualquer limite de passos falha, porque existe um programa que para logo depois do limite. PARADA é indecidível.",
+          g: "problema-da-parada",
+        },
+        {
+          s: "kleene",
+          q: "Qual é o caso base da soma por recursão primitiva?",
+          o: [
+            "soma(0, y) = y",
+            "soma(x, 1) = S(x)",
+            "soma(0, 0) = 1",
+            "soma(x, 0) = x",
+          ],
+          c: 3,
+          e: "Somar 0 deixa x como está. O caso base usa a projeção Proj¹₁, que devolve a própria entrada.",
+          g: "recursao-primitiva",
+        },
+        {
+          s: "kleene",
+          q: "Quanto vale Proj³₃(4, 3, 7)?",
+          o: ["4", "3", "7", "14"],
+          c: 2,
+          e: "O número de cima diz que entram 3 valores, e o de baixo diz que sai o 3º, que é 7.",
+          g: "projecao",
+        },
+        {
+          s: "kleene",
+          q: "No montador, quantas vezes o sucessor S aperta +1 para calcular soma(2, 1)?",
+          o: ["0", "1", "2", "3"],
+          c: 1,
+          e: "S é aplicado y vezes a partir de x. Com y = 1, parte do 2 e aperta +1 uma vez.",
+          g: "sucessor",
+        },
+        {
+          s: "kleene",
+          q: "Qual operador pode fazer uma função nunca terminar?",
+          o: ["Composição", "Recursão primitiva", "Projeção", "Minimização"],
+          c: 3,
+          e: "A minimização procura o menor y que zera uma função e pode procurar para sempre, como em metade(5).",
+          g: "minimizacao",
+        },
+        {
+          s: "kleene",
+          q: "A recursão primitiva lembra qual estrutura de programação?",
+          o: [
+            "Laço for, porque o número de voltas é conhecido",
+            "Laço while, porque pode nunca terminar",
+            "Desvio VÁ PARA",
+            "Uma variável global",
+          ],
+          c: 0,
+          e: "Cada passo diminui y em 1, então a conta faz exatamente y voltas e termina.",
+          g: "recursao-primitiva",
+        },
+        {
+          s: "lambda",
+          q: "Qual termo é o numeral de Church 2?",
+          o: ["λf.λx.x", "λa.λb.a", "λf.λx.f(f(x))", "λf.λx.f x x"],
+          c: 2,
+          e: "O numeral n aplica f n vezes a x. Em λf.λx.f(f(x)), o f aparece duas vezes.",
+          g: "numerais-de-church",
+        },
+        {
+          s: "lambda",
+          q: "O que é um redex?",
+          o: [
+            "Uma abstração aplicada a um argumento, com a forma (λx.M) N",
+            "Uma variável sem λ que a defina",
+            "Um termo que já está na forma normal",
+            "Uma abstração sozinha, como λx.M",
+          ],
+          c: 0,
+          e: "Redex é o pedaço pronto para a redução β. Uma abstração sozinha ainda não tem argumento.",
+          g: "redex",
+        },
+        {
+          s: "lambda",
+          q: "Em ordem normal, qual é o resultado de (λx.5) Ω?",
+          o: ["Ω", "Loop, porque Ω não tem forma normal", "λx.5", "5"],
+          c: 3,
+          e: "A ordem normal reduz primeiro o redex de fora. Como x não aparece no corpo, o Ω é descartado e sobra 5.",
+          g: "ordem-normal",
+        },
+        {
+          s: "lambda",
+          q: "No termo λx.x y, como se classificam x e y?",
+          o: [
+            "x é ligada e y é livre",
+            "x é livre e y é ligada",
+            "As duas são ligadas",
+            "As duas são livres",
+          ],
+          c: 0,
+          e: "O λx define o x. Nenhum λ define o y, então ele é livre.",
+          g: "variaveis-livres-e-ligadas",
+        },
+        {
+          s: "lambda",
+          q: "Ao reduzir (λx.λy.x) y, o que é preciso fazer para obter a resposta correta?",
+          o: [
+            "Nada, basta trocar x por y e obter λy.y",
+            "Reduzir o y antes da abstração",
+            "Parar, porque o termo não tem redex",
+            "Renomear o y ligado para y′ (redução α) e obter λy′.y",
+          ],
+          c: 3,
+          e: "Sem renomear, o y livre do argumento seria capturado pelo λy do corpo. Com y′, a resposta λy′.y devolve o y de fora.",
+          g: "reducao-alfa",
+        },
+        {
+          s: "programas",
+          q: "No programa monolítico da soma, o que faz o trecho voltar e repetir?",
+          o: [
+            "VÁ PARA LOOP",
+            "ENQUANTO contador ≠ 0 FAÇA",
+            "RETORNAR resultado",
+            "Uma chamada soma(x, y - 1)",
+          ],
+          c: 0,
+          e: "O programa monolítico não tem comandos de repetição. Ele repete com desvios, como VÁ PARA LOOP.",
+          g: "programa-monolitico",
+        },
+        {
+          s: "programas",
+          q: "Na versão iterativa, quantas vezes o corpo do ENQUANTO roda para soma(2, 1)?",
+          o: ["0", "1", "2", "3"],
+          c: 1,
+          e: "O contador começa em y = 1. Depois de uma volta ele chega a 0 e a condição de parada encerra o laço.",
+          g: "condicao-de-parada",
+        },
+        {
+          s: "programas",
+          q: "Qual é o caso-base da função recursiva soma(x, y)?",
+          o: [
+            "SE x = 0 ENTÃO RETORNAR y",
+            "SE y = 1 ENTÃO RETORNAR x + 1",
+            "SE y = 0 ENTÃO RETORNAR x",
+            "SE x = y ENTÃO RETORNAR 0",
+          ],
+          c: 2,
+          e: "Quando y chega a 0, a função responde x sem chamar de novo. É o mesmo caso base de Kleene.",
+          g: "caso-base",
+        },
+        {
+          s: "programas",
+          q: "Ao calcular soma(2, 1) de forma recursiva, quantas chamadas chegam a ficar juntas na pilha de chamadas?",
+          o: ["1", "2", "3", "4"],
+          c: 1,
+          e: "soma(2, 1) espera por soma(2, 0). São duas chamadas na pilha, e a de cima responde primeiro.",
+          g: "pilha-de-chamadas",
+        },
+        {
+          s: "programas",
+          q: "Para que serve o teste de mesa?",
+          o: [
+            "Medir quanto tempo o programa leva",
+            "Desenhar o fluxograma do programa",
+            "Traduzir o programa para a Máquina de Turing",
+            "Simular o programa à mão, anotando o valor das variáveis a cada linha",
+          ],
+          c: 3,
+          e: "O teste de mesa acompanha o estado do programa linha por linha, como a tabela da página de Programas.",
+          g: "teste-de-mesa",
+        },
+      ];
+
+      const $ = (id) => document.getElementById(id);
+      const answered = new Map();
+
+      function build() {
+        let html = "";
+        let last = null;
+        QS.forEach((x, i) => {
+          if (x.s !== last) {
+            const [n, name, color] = SECS[x.s];
+            html += `<div class="sec" style="--acc: var(${color}); --acc-bg: var(${color}-bg)"><span class="badge">${n}</span><h2>${name}</h2><a class="pill" href="glossario.html#${x.s}">↗ glossário</a></div>`;
+            last = x.s;
+          }
+          const opts = x.o
+            .map(
+              (t, j) =>
+                `<button class="opt" data-q="${i}" data-o="${j}"><span class="l">${"abcd"[j]}</span>${t}</button>`,
+            )
+            .join("");
+          html += `<article class="qz" id="q${i + 1}" style="--acc: var(${SECS[x.s][2]}); --acc-bg: var(${SECS[x.s][2]}-bg)"><p class="qt"><span class="qn">${i + 1}</span>${x.q}</p><div class="opts">${opts}</div><div class="fb" hidden></div></article>`;
+        });
+        $("quiz").innerHTML = html;
+      }
+
+      function pick(i, j) {
+        if (answered.has(i)) return;
+        const x = QS[i];
+        answered.set(i, j === x.c);
+        const box = $("q" + (i + 1));
+        box.querySelectorAll(".opt").forEach((b) => {
+          const k = Number(b.dataset.o);
+          b.disabled = true;
+          if (k === x.c) b.classList.add("right");
+          else if (k === j) b.classList.add("wrong");
+        });
+        const fb = box.querySelector(".fb");
+        fb.className = "fb " + (j === x.c ? "ok" : "no");
+        fb.innerHTML = `<b>${j === x.c ? "Certo." : "Ainda não. A certa é a " + "abcd"[x.c] + "."}</b> ${x.e} <a href="glossario.html#${x.g}">Ver no glossário</a>`;
+        fb.hidden = false;
+        score();
+      }
+
+      function score() {
+        const ok = [...answered.values()].filter(Boolean).length;
+        $("score").textContent = `${ok} de ${QS.length}`;
+        const done = answered.size === QS.length;
+        $("end").hidden = !done;
+        if (done)
+          $("endText").innerHTML = `<b>Você acertou ${ok} de ${QS.length}.</b> As explicações continuam abertas em cada questão para revisar.`;
+      }
+
+      $("quiz").onclick = (ev) => {
+        const b = ev.target.closest(".opt");
+        if (b) pick(Number(b.dataset.q), Number(b.dataset.o));
+      };
+      $("again").onclick = () => {
+        answered.clear();
+        build();
+        score();
+        scrollTo({ top: 0 });
+      };
+      build();
+      score();
+    </script>
+  </body>
+</html>

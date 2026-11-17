@@ -1,0 +1,434 @@
+<!doctype html>
+<!-- Glossário dos materiais interativos do Trabalho Final de Teoria da Computação (AL0349). Reúne os termos das quatro páginas, com a notação das Texto-Aulas 16 a 19, e tem uma busca que filtra os termos. -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Glossário | Teoria da Computação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Math&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="estilo.css" />
+  </head>
+  <body class="m-glos">
+    <nav class="back" aria-label="Navegação">
+      <a href="./">← Voltar<span class="long"> às quatro formas</span></a>
+    </nav>
+    <div class="wrap">
+      <header class="top">
+        <div class="strip" aria-hidden="true">
+          <span class="head">q0</span><i>⊛</i><i class="f">1</i
+          ><i class="f">1</i><i class="f">+</i><i class="f">1</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i>
+        </div>
+        <h1>Glossário</h1>
+        <p class="lead">
+          Os termos das quatro páginas, com a notação das Texto-Aulas 16 a 19.
+          Digite na busca para filtrar, ou clique num conceito de qualquer página
+          para chegar direto aqui.
+        </p>
+        <p class="meta">
+          <span>Amanda Dias · Matrícula 2510101045</span
+          ><span>Teoria da Computação (AL0349) · 2026/2</span>
+        </p>
+      </header>
+
+      <label class="find"
+        ><b>Buscar</b
+        ><input
+          id="q"
+          type="search"
+          placeholder="ex.: redex, pilha, β"
+          autocomplete="off"
+      /></label>
+      <p class="status" id="none" hidden>Nenhum termo encontrado.</p>
+
+      <section
+        class="gsec"
+        id="mt"
+        style="--acc: var(--blue); --acc-bg: var(--blue-bg)"
+      >
+        <div class="sec">
+          <span class="badge">1</span>
+          <h2>Máquina de Turing</h2>
+          <a class="pill" href="mt.html">↗ simulador da MT</a>
+        </div>
+        <dl class="glos">
+          <div id="fita">
+            <dt>Fita</dt>
+            <dd>
+              Fileira de células, cada uma com um símbolo. A soma 2 + 1 começa
+              como <code>⊛11+1βββ</code>.
+            </dd>
+          </div>
+          <div id="marcador">
+            <dt>⊛ (marcador de início)</dt>
+            <dd>Símbolo da primeira célula. Ele marca onde a fita começa.</dd>
+          </div>
+          <div id="branco">
+            <dt>β (branco)</dt>
+            <dd>Símbolo de célula vazia. Depois da entrada, a fita só tem β.</dd>
+          </div>
+          <div id="alfabeto">
+            <dt>Σ (alfabeto de entrada)</dt>
+            <dd>
+              Símbolos que a entrada pode ter. Na máquina da soma, Σ = {1, +}.
+            </dd>
+          </div>
+          <div id="cabeca">
+            <dt>Cabeça de leitura e gravação</dt>
+            <dd>
+              Fica sobre uma célula. A cada passo, lê o símbolo, escreve outro
+              no lugar e anda uma célula.
+            </dd>
+          </div>
+          <div id="d-e">
+            <dt>D e E</dt>
+            <dd>Movimentos da cabeça, uma célula para a direita ou para a esquerda.</dd>
+          </div>
+          <div id="unidade-de-controle">
+            <dt>Unidade de controle</dt>
+            <dd>
+              A memória da máquina. Ela guarda o estado atual e consulta as
+              regras para decidir o próximo passo.
+            </dd>
+          </div>
+          <div id="estado-mt">
+            <dt>Estado</dt>
+            <dd>
+              Diz em que etapa da tarefa a máquina está, como q1, que significa
+              "ainda passando pelo primeiro número". q0 é o estado inicial e qf é
+              o final.
+            </dd>
+          </div>
+          <div id="funcao-de-transicao">
+            <dt>Função de transição Π</dt>
+            <dd>
+              A lista de regras da máquina, no formato Π(estado, lido) = (novo
+              estado, escrito, movimento). Exemplo:
+              <code>Π(q1, +) = (q2, 1, D)</code> troca o + por 1.
+            </dd>
+          </div>
+          <div id="aceitar-rejeitar">
+            <dt>Aceitar e rejeitar</dt>
+            <dd>
+              Aceitar é parar num estado final. Rejeitar é parar porque nenhuma
+              regra serve para o estado e o símbolo atuais.
+            </dd>
+          </div>
+          <div id="loop">
+            <dt>Loop</dt>
+            <dd>
+              A máquina roda para sempre e nunca responde. No simulador, isso
+              acontece com 111 na versão que reconhece.
+            </dd>
+          </div>
+          <div id="decidir">
+            <dt>Decidir</dt>
+            <dd>
+              A máquina sempre para, aceitando as palavras da linguagem e
+              rejeitando as outras. A linguagem é decidível, ou recursiva.
+            </dd>
+          </div>
+          <div id="reconhecer">
+            <dt>Reconhecer</dt>
+            <dd>
+              A máquina aceita as palavras da linguagem, mas pode rejeitar ou
+              entrar em loop nas outras. A linguagem é reconhecível, ou
+              recursivamente enumerável.
+            </dd>
+          </div>
+          <div id="problema-da-parada">
+            <dt>Problema da Parada (PARADA)</dt>
+            <dd>
+              Dizer se um programa para com uma entrada. Nenhuma máquina decide
+              PARADA, por isso ele é indecidível.
+            </dd>
+          </div>
+          <div id="algoritmo-e-maquina">
+            <dt>Algoritmo e máquina (tese de Church-Turing)</dt>
+            <dd>
+              Tudo o que um algoritmo calcula, uma Máquina de Turing também
+              calcula. É uma tese, e não um teorema, porque "algoritmo" não tem
+              definição matemática.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        class="gsec"
+        id="kleene"
+        style="--acc: var(--teal); --acc-bg: var(--teal-bg)"
+      >
+        <div class="sec">
+          <span class="badge">2</span>
+          <h2>Funções Recursivas de Kleene</h2>
+          <a class="pill" href="kleene.html">↗ montador da soma</a>
+        </div>
+        <dl class="glos">
+          <div id="funcao-zero">
+            <dt>Função zero</dt>
+            <dd>Devolve 0 para qualquer entrada, como o botão que zera o visor.</dd>
+          </div>
+          <div id="sucessor">
+            <dt>Sucessor S</dt>
+            <dd>Soma 1. Exemplo: <code>S(2) = 3</code>.</dd>
+          </div>
+          <div id="projecao">
+            <dt>Projeção Proj</dt>
+            <dd>
+              Escolhe uma das entradas. O número de cima diz quantas entram, e o
+              de baixo diz qual sai. Exemplo: <code>Proj²₂(4, 3) = 3</code>.
+            </dd>
+          </div>
+          <div id="composicao">
+            <dt>Composição ∘</dt>
+            <dd>
+              Liga funções, e a saída de uma vira a entrada da outra.
+              <code>S ∘ Proj³₃</code> pega o terceiro valor e soma 1.
+            </dd>
+          </div>
+          <div id="recursao-primitiva">
+            <dt>Recursão primitiva</dt>
+            <dd>
+              Define f pelo caso base <code>f(x, 0) = g(x)</code> e pelo passo
+              <code>f(x, y + 1) = h(x, y, f(x, y))</code>. Lembra um laço for,
+              porque o número de voltas é conhecido.
+            </dd>
+          </div>
+          <div id="minimizacao">
+            <dt>Minimização</dt>
+            <dd>
+              <code>f(x) = min{ y | g(x, y) = 0 }</code> procura o menor y que
+              zera g. Lembra um laço while e pode nunca terminar.
+            </dd>
+          </div>
+          <div id="funcao-total">
+            <dt>Função total</dt>
+            <dd>Sempre devolve uma resposta. A soma é total.</dd>
+          </div>
+          <div id="roteiro">
+            <dt>Roteiro de linhas [01]</dt>
+            <dd>
+              Cada linha calcula uma chamada. Na descida fica um traço ___, e na
+              subida o valor de baixo preenche o traço de cima.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        class="gsec"
+        id="lambda"
+        style="--acc: var(--grape); --acc-bg: var(--grape-bg)"
+      >
+        <div class="sec">
+          <span class="badge">3</span>
+          <h2>Cálculo Lambda</h2>
+          <a class="pill" href="lambda.html">↗ redutor passo a passo</a>
+        </div>
+        <dl class="glos">
+          <div id="abstracao">
+            <dt>Abstração λx.M</dt>
+            <dd>
+              Uma função com parâmetro x e corpo M. <code>λx.x</code> devolve a
+              própria entrada.
+            </dd>
+          </div>
+          <div id="aplicacao">
+            <dt>Aplicação M N</dt>
+            <dd>Chama a função M com o argumento N.</dd>
+          </div>
+          <div id="variaveis-livres-e-ligadas">
+            <dt>Variáveis livres e ligadas</dt>
+            <dd>
+              Uma variável é ligada quando um λ a define, e livre quando nenhum
+              λ a define. Em <code>λx.x y</code>, x é ligada e y é livre.
+            </dd>
+          </div>
+          <div id="substituicao">
+            <dt>Substituição M[x→N]</dt>
+            <dd>Troca, em M, cada x livre por N.</dd>
+          </div>
+          <div id="reducao-beta">
+            <dt>Redução β</dt>
+            <dd>
+              Troca <code>(λx.M) N</code> por <code>M[x→N]</code>. Exemplo:
+              <code>(λx.x) 5 → 5</code>.
+            </dd>
+          </div>
+          <div id="redex">
+            <dt>Redex</dt>
+            <dd>
+              Pedaço do termo pronto para uma redução β, com a forma
+              <code>(λx.M) N</code>. Vem do inglês reducible expression.
+            </dd>
+          </div>
+          <div id="forma-normal">
+            <dt>Forma normal</dt>
+            <dd>Termo sem nenhum redex. É a resposta da conta.</dd>
+          </div>
+          <div id="ordem-normal">
+            <dt>Ordem normal</dt>
+            <dd>
+              Reduz sempre o redex mais à esquerda e mais de fora. Chega à forma
+              normal sempre que ela existe.
+            </dd>
+          </div>
+          <div id="church-rosser">
+            <dt>Teorema de Church-Rosser</dt>
+            <dd>
+              Se duas sequências de redução terminam, terminam no mesmo termo, a
+              menos dos nomes das variáveis ligadas.
+            </dd>
+          </div>
+          <div id="reducao-alfa">
+            <dt>Captura e redução α</dt>
+            <dd>
+              Captura é quando uma variável livre do argumento fica presa por um
+              λ do corpo. A redução α evita isso renomeando a variável ligada,
+              como y para y′.
+            </dd>
+          </div>
+          <div id="booleanos-de-church">
+            <dt>Booleanos de Church</dt>
+            <dd>
+              <code>VERDADEIRO = λa.λb.a</code>, <code>FALSO = λa.λb.b</code> e
+              <code>SESENAO = λx.λa.λb.x a b</code>.
+            </dd>
+          </div>
+          <div id="numerais-de-church">
+            <dt>Numerais de Church</dt>
+            <dd>
+              O numeral n aplica f n vezes a x. Exemplo:
+              <code>2 = λf.λx.f(f(x))</code>.
+            </dd>
+          </div>
+          <div id="soma-lambda">
+            <dt>SOMA</dt>
+            <dd>
+              <code>SOMA = λm.λn.λf.λx.m f (n f x)</code>. O n f x aplica f n
+              vezes, e o m f da frente aplica mais m vezes.
+            </dd>
+          </div>
+          <div id="omega">
+            <dt>Ω</dt>
+            <dd>
+              <code>(λx.x x) (λx.x x)</code> reduz para ele mesmo e não tem forma
+              normal.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        class="gsec"
+        id="programas"
+        style="--acc: var(--coral); --acc-bg: var(--coral-bg)"
+      >
+        <div class="sec">
+          <span class="badge">4</span>
+          <h2>Programas</h2>
+          <a class="pill" href="programas.html">↗ soma em três estilos</a>
+        </div>
+        <dl class="glos">
+          <div id="programa-monolitico">
+            <dt>Programa monolítico</dt>
+            <dd>
+              Bloco único de instruções, sem repetição e sem funções. Repete ou
+              pula com desvios, como <code>VÁ PARA LOOP</code>.
+            </dd>
+          </div>
+          <div id="programa-iterativo">
+            <dt>Programa iterativo</dt>
+            <dd>
+              Troca os desvios por laços, como
+              <code>ENQUANTO contador ≠ 0 FAÇA … FIM ENQUANTO</code>.
+            </dd>
+          </div>
+          <div id="programa-recursivo">
+            <dt>Programa recursivo</dt>
+            <dd>
+              Uma função chama a si mesma com um problema menor, como
+              <code>soma(x, y - 1) + 1</code>.
+            </dd>
+          </div>
+          <div id="estado-programa">
+            <dt>Estado</dt>
+            <dd>O valor de cada variável num instante.</dd>
+          </div>
+          <div id="fluxo-de-controle">
+            <dt>Fluxo de controle</dt>
+            <dd>A ordem em que as instruções rodam.</dd>
+          </div>
+          <div id="condicao-de-parada">
+            <dt>Condição de parada</dt>
+            <dd>
+              O que encerra a repetição. Na soma, o laço para quando o contador
+              chega a 0.
+            </dd>
+          </div>
+          <div id="caso-base">
+            <dt>Caso-base</dt>
+            <dd>
+              A chamada que responde sem chamar de novo. Em soma(x, y), é y = 0.
+            </dd>
+          </div>
+          <div id="teste-de-mesa">
+            <dt>Teste de mesa</dt>
+            <dd>Simular o programa à mão, anotando o estado a cada linha.</dd>
+          </div>
+          <div id="pilha-de-chamadas">
+            <dt>Pilha de chamadas</dt>
+            <dd>
+              Guarda as chamadas que esperam resposta. A última a entrar é a
+              primeira a sair.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <nav class="next" aria-label="Fim da página">
+        <a href="./">← Voltar<span class="long"> às quatro formas</span></a>
+        <a href="questoes.html">Questões →</a>
+      </nav>
+      <footer>
+        Fontes: Texto-Aulas 16 a 19, Teoria da Computação (AL0349), Prof. Dr.
+        Paulo Silas Severo de Souza, Unipampa, 2026/2. Glossário feito para o
+        Trabalho Final por Amanda Dias (2510101045).
+      </footer>
+    </div>
+
+    <script>
+      // Busca simples. Esconde os termos que não têm o texto digitado.
+      const norm = (s) =>
+        s
+          .normalize("NFD")
+          .replace(/[̀-ͯ]/g, "")
+          .toLowerCase();
+      const box = document.getElementById("q");
+      box.oninput = () => {
+        const q = norm(box.value.trim());
+        let any = false;
+        document.querySelectorAll(".gsec").forEach((sec) => {
+          let shown = 0;
+          sec.querySelectorAll(".glos > div").forEach((t) => {
+            const hit = !q || norm(t.textContent).includes(q);
+            t.hidden = !hit;
+            if (hit) shown += 1;
+          });
+          sec.hidden = shown === 0;
+          if (shown) any = true;
+        });
+        document.getElementById("none").hidden = any;
+      };
+    </script>
+  </body>
+</html>

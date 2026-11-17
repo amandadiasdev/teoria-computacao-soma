@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="estilo.css" />
   </head>
   <body class="m-mt">
+    <nav class="back" aria-label="Navegação">
+      <a href="./">← Voltar<span class="long"> às quatro formas</span></a>
+      <a href="glossario.html">Glossário</a>
+    </nav>
     <div class="wrap">
       <header class="top">
         <div class="strip" aria-hidden="true">
@@ -39,18 +43,18 @@
       <div class="sec">
         <span class="badge">1</span>
         <h2>Computabilidade e Indecidibilidade</h2>
-        <a class="pill" href="./">↗ quatro formas</a>
+        <a class="pill" href="glossario.html#mt">↗ glossário</a>
       </div>
       <ul class="chips" aria-label="Conceitos">
-        <li>fita</li>
-        <li>cabeça</li>
-        <li>unidade de controle</li>
-        <li>estado</li>
-        <li>função de transição</li>
-        <li>algoritmo e máquina</li>
-        <li>reconhecer</li>
-        <li>decidir</li>
-        <li>Problema da Parada</li>
+        <li><a href="glossario.html#fita">fita</a></li>
+        <li><a href="glossario.html#cabeca">cabeça</a></li>
+        <li><a href="glossario.html#unidade-de-controle">unidade de controle</a></li>
+        <li><a href="glossario.html#estado-mt">estado</a></li>
+        <li><a href="glossario.html#funcao-de-transicao">função de transição</a></li>
+        <li><a href="glossario.html#algoritmo-e-maquina">algoritmo e máquina</a></li>
+        <li><a href="glossario.html#reconhecer">reconhecer</a></li>
+        <li><a href="glossario.html#decidir">decidir</a></li>
+        <li><a href="glossario.html#problema-da-parada">Problema da Parada</a></li>
       </ul>
 
       <h2>Como a máquina pensa</h2>
@@ -95,7 +99,14 @@
           <button id="bRun" class="main">Rodar</button>
           <button id="bReset">Reiniciar</button>
         </div>
-        <div class="tape" id="tape" aria-label="Fita"></div>
+        <div class="tri" id="tri" aria-hidden="true">
+          <span data-p="read">1 lê</span><span data-p="write">2 escreve</span
+          ><span data-p="move">3 move</span>
+        </div>
+        <div class="tape" id="tapeBox" aria-label="Fita">
+          <div class="cells" id="tape"></div>
+          <div class="thead snap" id="head"></div>
+        </div>
         <p class="status" id="status" aria-live="polite"></p>
         <div id="out" aria-live="polite"></div>
       </section>
@@ -103,7 +114,8 @@
       <h2>Diagrama de estados</h2>
       <p>
         Cada seta mostra <i>lido/escrito,movimento</i>. O estado atual fica
-        amarelo. O círculo duplo é o estado final.
+        amarelo, e a bolinha percorre a seta da regra usada. O círculo duplo é o
+        estado final.
       </p>
       <div class="card">
         <svg
@@ -143,24 +155,25 @@
           </defs>
           <path d="M10 120 H56" marker-end="url(#ar)" />
           <text x="4" y="100" style="font-size: 12px">início</text>
-          <path d="M104 120 H194" marker-end="url(#ar)" />
-          <text x="118" y="110">⊛/⊛,D</text>
-          <path d="M244 120 H354" marker-end="url(#ar)" />
-          <text x="276" y="110">+/1,D</text>
-          <path d="M404 120 H494" marker-end="url(#ar)" />
-          <text x="424" y="110">β/β,E</text>
-          <path d="M544 120 H614" marker-end="url(#ar)" />
-          <text x="556" y="110">1/β,E</text>
-          <path d="M208 100 C185 40 255 40 232 100" marker-end="url(#ar)" />
-          <text x="198" y="44">1/1,D</text>
-          <path d="M368 100 C345 40 415 40 392 100" marker-end="url(#ar)" />
-          <text x="358" y="44">1/1,D</text>
+          <path data-r="1" d="M104 120 H194" marker-end="url(#ar)" />
+          <text data-r="1" x="118" y="110">⊛/⊛,D</text>
+          <path data-r="3" d="M244 120 H354" marker-end="url(#ar)" />
+          <text data-r="3" x="276" y="110">+/1,D</text>
+          <path data-r="5" d="M404 120 H494" marker-end="url(#ar)" />
+          <text data-r="5" x="424" y="110">β/β,E</text>
+          <path data-r="6" d="M544 120 H614" marker-end="url(#ar)" />
+          <text data-r="6" x="556" y="110">1/β,E</text>
+          <path data-r="2" d="M208 100 C185 40 255 40 232 100" marker-end="url(#ar)" />
+          <text data-r="2" x="198" y="44">1/1,D</text>
+          <path data-r="4" d="M368 100 C345 40 415 40 392 100" marker-end="url(#ar)" />
+          <text data-r="4" x="358" y="44">1/1,D</text>
           <g class="loopr" id="loopEdge" hidden>
             <path
+              data-r="7"
               d="M200 140 C170 190 270 190 240 140"
               marker-end="url(#arc)"
             />
-            <text x="196" y="172">β/β,D</text>
+            <text data-r="7" x="196" y="172">β/β,D</text>
           </g>
           <g class="st" data-q="q0">
             <circle cx="80" cy="120" r="24" />
@@ -183,6 +196,7 @@
             <circle cx="640" cy="120" r="19" style="fill: none" />
             <text x="640" y="120">qf</text>
           </g>
+          <circle class="tok" id="tok" r="7" hidden />
         </svg>
       </div>
 
@@ -225,6 +239,10 @@
         PARADA.
       </div>
 
+      <nav class="next" aria-label="Fim da página">
+        <a href="./">← Voltar<span class="long"> às quatro formas</span></a>
+        <a href="kleene.html">Próxima: Funções de Kleene →</a>
+      </nav>
       <footer>
         Fonte: Texto-Aula 16 (Máquinas de Turing, Computabilidade e
         Indecidibilidade), Teoria da Computação (AL0349), Prof. Dr. Paulo Silas
@@ -304,68 +322,153 @@
       const FINAL = "qf";
       const EXTRA = 40;
       const $ = (id) => document.getElementById(id);
+      const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // M.gen muda a cada Reiniciar. Uma animação antiga vê o número novo e para.
       const M = {
         tape: [],
         inLen: 0,
         pos: 0,
         q: "q0",
+        shownQ: "q0",
+        sym: null,
         steps: 0,
         done: null,
         last: null,
+        phase: null,
         rec: false,
-        timer: null,
+        running: false,
+        busy: false,
+        gen: 0,
       };
 
       function active(r) {
         return !r.rec || M.rec;
       }
 
+      // Tempo de cada fase. Rodar fica mais rápido que Passo.
+      function pace() {
+        if (REDUCE) return 0;
+        return M.running ? 170 : 330;
+      }
+
+      function wait(ms, g) {
+        return new Promise((ok) => setTimeout(ok, ms)).then(() => {
+          if (g !== M.gen) throw "stop";
+        });
+      }
+
+      // Leva a bolinha pela seta da regra usada no diagrama.
+      function travel(id, ms, g) {
+        const path = document.querySelector(`path[data-r="${id}"]`);
+        const tok = $("tok");
+        if (!ms || !path) return Promise.resolve();
+        const len = path.getTotalLength();
+        tok.hidden = false;
+        return new Promise((ok) => {
+          const t0 = performance.now();
+          let ended = false;
+          // O relógio garante o fim mesmo com a aba escondida, quando o navegador pausa os quadros.
+          const end = () => {
+            if (ended) return;
+            ended = true;
+            tok.hidden = true;
+            ok();
+          };
+          setTimeout(end, ms + 60);
+          function frame(now) {
+            if (ended) return;
+            const t = Math.min((now - t0) / ms, 1);
+            const p = path.getPointAtLength(len * t);
+            tok.setAttribute("cx", p.x);
+            tok.setAttribute("cy", p.y);
+            if (t < 1 && g === M.gen) requestAnimationFrame(frame);
+            else end();
+          }
+          requestAnimationFrame(frame);
+        }).then(() => {
+          if (g !== M.gen) throw "stop";
+        });
+      }
+
       function reset() {
         stop();
+        M.gen += 1;
+        M.busy = false;
         const w = $("inp").value.replace(/\s/g, "");
         M.tape = ["⊛", ...w, "β", "β", "β"];
         M.inLen = w.length;
         M.pos = 0;
         M.q = "q0";
+        M.shownQ = "q0";
         M.steps = 0;
         M.last = null;
+        M.phase = null;
         M.done = /^[1+]*$/.test(w) ? null : "bad";
+        $("tok").hidden = true;
+        $("head").classList.add("snap");
         render();
       }
 
-      function step() {
-        if (M.done) return;
-        const sym = M.tape[M.pos];
-        const rule = RULES.find((r) => active(r) && r.q === M.q && r.r === sym);
-        if (!rule) {
-          M.done = "rej";
-          return render();
+      // Um passo tem três fases: lê o símbolo, escreve, move a cabeça.
+      async function step() {
+        if (M.done || M.busy) return;
+        const g = M.gen;
+        M.busy = true;
+        try {
+          const sym = M.tape[M.pos];
+          const rule = RULES.find(
+            (r) => active(r) && r.q === M.q && r.r === sym,
+          );
+          if (!rule) {
+            M.done = "rej";
+            return;
+          }
+          M.sym = sym;
+          M.last = rule;
+          M.phase = "read";
+          render();
+          await wait(pace(), g);
+          M.tape[M.pos] = rule.w;
+          M.phase = "write";
+          render();
+          await wait(pace(), g);
+          M.pos += rule.m === "D" ? 1 : -1;
+          M.q = rule.n;
+          M.steps += 1;
+          M.phase = "move";
+          while (M.tape.length < M.pos + 3) M.tape.push("β");
+          render();
+          await travel(rule.id, pace() * 1.4, g);
+          M.shownQ = M.q;
+          M.phase = null;
+          if (M.pos < 0) M.done = "left";
+          else if (M.q === FINAL) M.done = "acc";
+          else if (M.rec && M.steps >= M.inLen + EXTRA) M.done = "limit";
+        } catch (e) {
+          if (e !== "stop") throw e;
+        } finally {
+          if (g === M.gen) {
+            M.busy = false;
+            render();
+          }
         }
-        M.tape[M.pos] = rule.w;
-        M.pos += rule.m === "D" ? 1 : -1;
-        M.q = rule.n;
-        M.steps += 1;
-        M.last = rule;
-        if (M.pos < 0) M.done = "left";
-        else if (M.q === FINAL) M.done = "acc";
-        else if (M.rec && M.steps >= M.inLen + EXTRA) M.done = "limit";
-        while (M.tape.length < M.pos + 3) M.tape.push("β");
-        render();
       }
 
-      function run() {
-        if (M.timer) return stop();
+      async function run() {
+        if (M.running) return stop();
         if (M.done) reset();
+        const g = M.gen;
+        M.running = true;
         $("bRun").textContent = "Pausar";
-        M.timer = setInterval(() => {
-          step();
-          if (M.done) stop();
-        }, 380);
+        while (M.running && !M.done && g === M.gen) {
+          await step();
+          await wait(REDUCE ? 120 : 220, g).catch(() => {});
+        }
+        if (g === M.gen) stop();
       }
 
       function stop() {
-        clearInterval(M.timer);
-        M.timer = null;
+        M.running = false;
         $("bRun").textContent = "Rodar";
       }
 
@@ -386,24 +489,64 @@
         return M.done ? msg[M.done] : "";
       }
 
+      function statusText() {
+        const r = M.last;
+        if (M.phase === "read")
+          return `Em ${r.q}, a cabeça lê ${M.sym}. Vale a ${ruleText(r)}.`;
+        if (M.phase === "write")
+          return r.w === M.sym
+            ? `Escreve ${r.w} por cima do ${M.sym}, então a célula fica igual.`
+            : `Escreve ${r.w} no lugar de ${M.sym}.`;
+        if (M.phase === "move")
+          return `Move a cabeça para a ${r.m === "D" ? "direita" : "esquerda"} e vai para ${r.n}.`;
+        return (
+          `Passo ${M.steps} · estado ${M.q} · lendo ${M.tape[M.pos] ?? "fora da fita"}` +
+          (r ? ` · usou a ${ruleText(r)}` : "")
+        );
+      }
+
+      // A cabeça é uma peça só. Ela desliza até a célula atual.
+      function placeHead() {
+        const head = $("head");
+        const cell = $("tape").children[M.pos];
+        head.hidden = !cell || M.done === "bad";
+        if (head.hidden) return;
+        head.textContent = M.q;
+        head.style.left = cell.offsetLeft + cell.offsetWidth / 2 + "px";
+        const box = $("tapeBox");
+        const want = cell.offsetLeft - box.clientWidth / 2;
+        box.scrollTo({ left: want, behavior: REDUCE ? "auto" : "smooth" });
+        if (head.classList.contains("snap"))
+          requestAnimationFrame(() => head.classList.remove("snap"));
+      }
+
       function render() {
+        const readAt = M.phase === "read" || M.phase === "write";
         $("tape").innerHTML = M.tape
-          .map(
-            (s, i) =>
-              `<div class="cell${s === "β" ? " blank" : ""}${i === M.pos && M.done !== "bad" ? " cur" : ""}" data-q="${M.q}">${s}</div>`,
-          )
+          .map((s, i) => {
+            let c = "cell";
+            if (s === "β") c += " blank";
+            if (i === M.pos && M.done !== "bad") c += " cur";
+            if (i === M.pos && readAt) c += " read";
+            if (i === M.pos && M.phase === "write") c += " wrote";
+            return `<div class="${c}">${s}</div>`;
+          })
           .join("");
-        const cur = $("tape").querySelector(".cur");
-        if (cur) cur.scrollIntoView({ block: "nearest", inline: "center" });
-        $("status").textContent =
-          M.done === "bad"
-            ? ""
-            : `Passo ${M.steps} · estado ${M.q} · lendo ${M.tape[M.pos] ?? "fora da fita"}` +
-              (M.last ? ` · usou a ${ruleText(M.last)}` : "");
-        $("out").innerHTML = result();
+        placeHead();
+        $("status").textContent = M.done === "bad" ? "" : statusText();
+        $("out").innerHTML = M.busy ? "" : result();
+        document
+          .querySelectorAll("#tri span")
+          .forEach((s) => s.classList.toggle("on", s.dataset.p === M.phase));
         document
           .querySelectorAll(".st")
-          .forEach((g) => g.classList.toggle("on", g.dataset.q === M.q));
+          .forEach((g) => g.classList.toggle("on", g.dataset.q === M.shownQ));
+        document.querySelectorAll("[data-r]").forEach((el) => {
+          const on = !!M.last && Number(el.dataset.r) === M.last.id;
+          el.classList.toggle("use", on);
+          if (el.tagName === "path" && el.dataset.r !== "7")
+            el.setAttribute("marker-end", on ? "url(#arc)" : "url(#ar)");
+        });
         $("rules").innerHTML = RULES.filter(active)
           .map(
             (r) =>
@@ -411,7 +554,7 @@
           )
           .join("");
         $("loopEdge").toggleAttribute("hidden", !M.rec);
-        $("bStep").disabled = !!M.done;
+        $("bStep").disabled = !!M.done || M.busy;
       }
 
       function setMode(rec) {
@@ -436,6 +579,7 @@
           reset();
         };
       });
+      addEventListener("resize", placeHead);
       reset();
     </script>
   </body>
