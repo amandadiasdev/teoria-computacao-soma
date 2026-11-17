@@ -5,288 +5,49 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Soma de Kleene passo a passo | Teoria da Computação</title>
-    <style>
-      :root {
-        --ink: #1f2433;
-        --muted: #5f6675;
-        --paper: #fffdf7;
-        --line: #1f2433;
-        --coral: #ff6b57;
-        --coral-bg: #ffe3dd;
-        --sun: #ffc531;
-        --sun-bg: #fff3c7;
-        --teal: #15a39a;
-        --teal-bg: #d4f3ef;
-        --sky: #2f80ed;
-        --sky-bg: #dbe9ff;
-        --leaf: #2e9e4f;
-        --leaf-bg: #dcf5e3;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      [hidden] {
-        display: none !important;
-      }
-      body {
-        margin: 0;
-        font:
-          17px/1.6 system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        color: var(--ink);
-        background: var(--paper);
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 28px 18px 80px;
-      }
-      header {
-        border: 2px solid var(--line);
-        border-radius: 14px;
-        padding: 22px 24px;
-        background: #fff;
-        box-shadow: 6px 6px 0 var(--teal);
-      }
-      h1 {
-        font-size: 2rem;
-        line-height: 1.15;
-        margin: 0 0 8px;
-      }
-      .lead {
-        margin: 0;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
-      h2 {
-        font-size: 1.6rem;
-        margin: 40px 0 12px;
-        line-height: 1.2;
-      }
-      p {
-        margin: 0 0 12px;
-      }
-      .card {
-        border: 2px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px;
-        background: #fff;
-        margin: 14px 0;
-        overflow-x: auto;
-      }
-      .card.sun {
-        background: var(--sun-bg);
-      }
-      .formula {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 1.15rem;
-        background: #fff;
-        border: 2px dashed var(--line);
-        border-radius: 10px;
-        padding: 10px 14px;
-        margin: 10px 0;
-        overflow-x: auto;
-      }
-      .why {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--sun);
-        background: var(--sun-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 10px 0;
-      }
-      .ans {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--leaf);
-        background: var(--leaf-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 12px 0 6px;
-        font-weight: 700;
-        font-size: 1.05rem;
-      }
-      .check {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--coral);
-        background: var(--coral-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 8px 0;
-      }
-      .steps {
-        counter-reset: s;
-        padding: 0;
-        margin: 10px 0;
-        list-style: none;
-      }
-      .steps li {
-        counter-increment: s;
-        position: relative;
-        padding: 6px 0 6px 44px;
-        margin: 4px 0;
-      }
-      .steps li::before {
-        content: counter(s);
-        position: absolute;
-        left: 0;
-        top: 6px;
-        width: 30px;
-        height: 30px;
-        border: 2px solid var(--line);
-        border-radius: 50%;
-        background: var(--sun);
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      footer {
-        margin-top: 50px;
-        font-size: 0.85rem;
-        color: var(--muted);
-        border-top: 2px solid var(--line);
-        padding-top: 12px;
-      }
-      /* montador */
-      .sim {
-        border: 3px solid var(--line);
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 8px 8px 0 var(--teal);
-        padding: 16px 18px;
-        margin: 26px 0;
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        margin: 0 0 12px;
-      }
-      label b {
-        margin-right: 6px;
-        font-family: Georgia, serif;
-      }
-      input[type="number"] {
-        font:
-          1.15rem Georgia,
-          serif;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 4px 8px;
-        width: 4.2em;
-        background: var(--paper);
-      }
-      button {
-        font: inherit;
-        font-weight: 800;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 6px 14px;
-        background: #fff;
-        box-shadow: 3px 3px 0 var(--line);
-        cursor: pointer;
-        color: var(--ink);
-      }
-      button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 var(--line);
-      }
-      button.main {
-        background: var(--sun);
-      }
-      button:disabled {
-        opacity: 0.45;
-        cursor: default;
-      }
-      .phase {
-        font-weight: 800;
-        border: 2px solid var(--line);
-        border-radius: 6px;
-        padding: 0 10px;
-        background: var(--teal-bg);
-      }
-      .routine {
-        font-family: Georgia, serif;
-        font-size: 1.1rem;
-        background: var(--paper);
-        border: 2px dashed var(--line);
-        border-radius: 8px;
-        padding: 10px 14px;
-        overflow-x: auto;
-        min-height: 3em;
-      }
-      .ln {
-        white-space: nowrap;
-        padding: 2px 6px;
-        border-radius: 6px;
-      }
-      .ln .n {
-        color: var(--muted);
-        margin-right: 8px;
-      }
-      .ln.now {
-        background: var(--sun-bg);
-        outline: 2px solid var(--sun);
-      }
-      .blank {
-        color: var(--coral);
-        font-weight: 700;
-      }
-      .fill {
-        color: var(--sky);
-        font-weight: 700;
-      }
-      .status {
-        margin: 10px 0 0;
-      }
-      svg {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-      svg text {
-        font-family: Georgia, serif;
-        font-size: 15px;
-        fill: var(--ink);
-        text-anchor: middle;
-      }
-      svg rect {
-        fill: #fff;
-        stroke: var(--line);
-        stroke-width: 2;
-      }
-      svg .on rect {
-        fill: var(--sun);
-      }
-      svg path {
-        fill: none;
-        stroke: var(--line);
-        stroke-width: 2;
-      }
-      @media (max-width: 600px) {
-        h1 {
-          font-size: 1.6rem;
-        }
-        .routine {
-          font-size: 1rem;
-        }
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Math&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="estilo.css" />
   </head>
-  <body>
+  <body class="m-kleene">
     <div class="wrap">
-      <header>
+      <header class="top">
+        <div class="strip" aria-hidden="true">
+          <span class="head">q0</span><i>⊛</i><i class="f">1</i
+          ><i class="f">1</i><i class="f">+</i><i class="f">1</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i>
+        </div>
         <h1>Soma de Kleene passo a passo</h1>
         <p class="lead">
           Escolha x e y e aperte Passo para montar soma(x, y) com o roteiro de
           linhas da Aula 17. Na descida, cada linha deixa um traço. Na subida, o
           valor de baixo preenche o traço de cima.
         </p>
+        <p class="meta">
+          <span>Amanda Dias · Matrícula 2510101045</span
+          ><span>Teoria da Computação (AL0349) · 2026/2</span>
+        </p>
       </header>
+      <div class="sec">
+        <span class="badge">2</span>
+        <h2>Funções Recursivas de Kleene</h2>
+        <a class="pill" href="./">↗ quatro formas</a>
+      </div>
+      <ul class="chips" aria-label="Conceitos">
+        <li>função zero</li>
+        <li>sucessor</li>
+        <li>projeção</li>
+        <li>composição</li>
+        <li>recursão primitiva</li>
+        <li>minimização</li>
+      </ul>
 
       <h2>As duas regras da soma</h2>
       <div class="formula">

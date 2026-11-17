@@ -5,385 +5,50 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Soma em três programas | Teoria da Computação</title>
-    <style>
-      :root {
-        --ink: #1f2433;
-        --muted: #5f6675;
-        --paper: #fffdf7;
-        --line: #1f2433;
-        --coral: #ff6b57;
-        --coral-bg: #ffe3dd;
-        --sun: #ffc531;
-        --sun-bg: #fff3c7;
-        --teal: #15a39a;
-        --teal-bg: #d4f3ef;
-        --grape: #7b4fd6;
-        --grape-bg: #e9dffb;
-        --sky: #2f80ed;
-        --sky-bg: #dbe9ff;
-        --leaf: #2e9e4f;
-        --leaf-bg: #dcf5e3;
-        --cat: var(--sky);
-        --cat-bg: var(--sky-bg);
-      }
-      * {
-        box-sizing: border-box;
-      }
-      [hidden] {
-        display: none !important;
-      }
-      body {
-        margin: 0;
-        font:
-          17px/1.6 system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        color: var(--ink);
-        background: var(--paper);
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 28px 18px 80px;
-      }
-      header {
-        border: 2px solid var(--line);
-        border-radius: 14px;
-        padding: 22px 24px;
-        background: #fff;
-        box-shadow: 6px 6px 0 var(--teal);
-      }
-      h1 {
-        font-size: 2rem;
-        line-height: 1.15;
-        margin: 0 0 8px;
-      }
-      .lead {
-        margin: 0;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
-      h2 {
-        font-size: 1.6rem;
-        margin: 40px 0 12px;
-        line-height: 1.2;
-      }
-      h3 {
-        font-size: 1.1rem;
-        margin: 16px 0 8px;
-      }
-      p {
-        margin: 0 0 12px;
-      }
-      .card {
-        border: 2px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px;
-        background: #fff;
-        margin: 14px 0;
-        overflow-x: auto;
-      }
-      .card.sun {
-        background: var(--sun-bg);
-      }
-      .why {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--sun);
-        background: var(--sun-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 10px 0;
-      }
-      .ans {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--leaf);
-        background: var(--leaf-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 12px 0 6px;
-        font-weight: 700;
-        font-size: 1.05rem;
-      }
-      .check {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--coral);
-        background: var(--coral-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 8px 0;
-      }
-      .steps {
-        counter-reset: s;
-        padding: 0;
-        margin: 10px 0;
-        list-style: none;
-      }
-      .steps li {
-        counter-increment: s;
-        position: relative;
-        padding: 6px 0 6px 44px;
-        margin: 4px 0;
-      }
-      .steps li::before {
-        content: counter(s);
-        position: absolute;
-        left: 0;
-        top: 6px;
-        width: 30px;
-        height: 30px;
-        border: 2px solid var(--line);
-        border-radius: 50%;
-        background: var(--sun);
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th,
-      td {
-        border: 2px solid var(--line);
-        padding: 5px 10px;
-        text-align: left;
-        vertical-align: top;
-      }
-      th {
-        background: var(--sun-bg);
-      }
-      footer {
-        margin-top: 50px;
-        font-size: 0.85rem;
-        color: var(--muted);
-        border-top: 2px solid var(--line);
-        padding-top: 12px;
-      }
-      /* executor */
-      .sim {
-        border: 3px solid var(--line);
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 8px 8px 0 var(--cat);
-        padding: 16px 18px;
-        margin: 26px 0;
-      }
-      .sim.iter {
-        --cat: var(--teal);
-        --cat-bg: var(--teal-bg);
-      }
-      .sim.rec {
-        --cat: var(--grape);
-        --cat-bg: var(--grape-bg);
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        margin: 0 0 12px;
-      }
-      .mode {
-        display: inline-flex;
-        flex-wrap: wrap;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        overflow: hidden;
-      }
-      .mode button {
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
-        font-weight: 700;
-        padding: 6px 14px;
-      }
-      .mode button + button {
-        border-left: 2px solid var(--line);
-      }
-      .mode button[aria-pressed="true"] {
-        background: var(--cat-bg);
-      }
-      label b {
-        margin-right: 6px;
-        font-family: Georgia, serif;
-      }
-      input[type="number"] {
-        font:
-          1.15rem Georgia,
-          serif;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 4px 8px;
-        width: 4.2em;
-        background: var(--paper);
-        color: var(--ink);
-      }
-      button {
-        font: inherit;
-        font-weight: 800;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 6px 14px;
-        background: #fff;
-        box-shadow: 3px 3px 0 var(--line);
-        cursor: pointer;
-        color: var(--ink);
-      }
-      button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 var(--line);
-      }
-      button.main {
-        background: var(--sun);
-      }
-      button:disabled {
-        opacity: 0.45;
-        cursor: default;
-      }
-      .prog {
-        font-family: Georgia, serif;
-        font-size: 1.05rem;
-        background: var(--paper);
-        border: 2px dashed var(--line);
-        border-radius: 8px;
-        padding: 10px 14px;
-        overflow-x: auto;
-      }
-      .pl {
-        display: flex;
-        white-space: pre;
-        padding: 1px 6px;
-        border-radius: 6px;
-      }
-      .pl .lab {
-        width: 5.2em;
-        flex: none;
-        font-weight: 700;
-      }
-      .pl .num {
-        width: 1.8em;
-        flex: none;
-        color: var(--muted);
-      }
-      .pl.now {
-        background: var(--cat-bg);
-        outline: 2px solid var(--cat);
-      }
-      .status {
-        margin: 10px 0;
-        min-height: 1.6em;
-      }
-      .mesa {
-        overflow-x: auto;
-        max-height: 420px;
-        overflow-y: auto;
-      }
-      .mesa td,
-      .mesa th {
-        font-family: Georgia, serif;
-        white-space: nowrap;
-        text-align: center;
-      }
-      .mesa th {
-        font-family: system-ui, sans-serif;
-      }
-      .mesa tr.now td {
-        background: var(--sun-bg);
-      }
-      .new {
-        background: var(--sky-bg);
-        outline: 2px solid var(--sky);
-        border-radius: 4px;
-        padding: 0 4px;
-      }
-      .jump {
-        font-weight: 800;
-        color: var(--coral);
-      }
-      .routine {
-        font-family: Georgia, serif;
-        font-size: 1.05rem;
-        background: var(--paper);
-        border: 2px dashed var(--line);
-        border-radius: 8px;
-        padding: 10px 14px;
-        overflow-x: auto;
-      }
-      .ln {
-        white-space: nowrap;
-        padding: 2px 6px;
-        border-radius: 6px;
-      }
-      .ln .n {
-        color: var(--muted);
-        margin-right: 8px;
-      }
-      .ln.now {
-        background: var(--sun-bg);
-        outline: 2px solid var(--sun);
-      }
-      .blank {
-        color: var(--coral);
-        font-weight: 700;
-      }
-      .fill {
-        color: var(--sky);
-        font-weight: 700;
-      }
-      .stack {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        max-width: 320px;
-      }
-      .frame {
-        font-family: Georgia, serif;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 4px 10px;
-        background: #fff;
-      }
-      .frame.top {
-        background: var(--grape-bg);
-        box-shadow: 4px 4px 0 var(--grape);
-      }
-      .two {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        align-items: flex-start;
-      }
-      .two > div {
-        flex: 1 1 300px;
-        min-width: 0;
-      }
-      .two > div:empty {
-        display: none;
-      }
-      @media (max-width: 700px) {
-        h1 {
-          font-size: 1.6rem;
-        }
-        .mode button {
-          padding: 6px 9px;
-          font-size: 0.95rem;
-        }
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Math&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="estilo.css" />
   </head>
-  <body>
+  <body class="m-prog">
     <div class="wrap">
-      <header>
+      <header class="top">
+        <div class="strip" aria-hidden="true">
+          <span class="head">q0</span><i>⊛</i><i class="f">1</i
+          ><i class="f">1</i><i class="f">+</i><i class="f">1</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i>
+        </div>
         <h1>A mesma soma em três programas</h1>
         <p class="lead">
           Escolha o estilo, monolítico, iterativo ou recursivo, e aperte Passo.
           A linha que roda fica marcada no programa, e o teste de mesa guarda o
           estado depois de cada linha.
         </p>
+        <p class="meta">
+          <span>Amanda Dias · Matrícula 2510101045</span
+          ><span>Teoria da Computação (AL0349) · 2026/2</span>
+        </p>
       </header>
+      <div class="sec">
+        <span class="badge">4</span>
+        <h2>Programas</h2>
+        <a class="pill" href="./">↗ quatro formas</a>
+      </div>
+      <ul class="chips" aria-label="Conceitos">
+        <li>programa monolítico</li>
+        <li>programa iterativo</li>
+        <li>programa recursivo</li>
+        <li>estado</li>
+        <li>fluxo de controle</li>
+        <li>condição de parada</li>
+        <li>caso-base</li>
+      </ul>
 
       <h2>Como ler o teste de mesa</h2>
       <div class="card sun">

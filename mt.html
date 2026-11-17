@@ -5,354 +5,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Máquina de Turing que soma | Teoria da Computação</title>
-    <style>
-      :root {
-        --ink: #1f2433;
-        --muted: #5f6675;
-        --paper: #fffdf7;
-        --line: #1f2433;
-        --coral: #ff6b57;
-        --coral-bg: #ffe3dd;
-        --sun: #ffc531;
-        --sun-bg: #fff3c7;
-        --teal: #15a39a;
-        --teal-bg: #d4f3ef;
-        --grape: #7b4fd6;
-        --grape-bg: #e9dffb;
-        --sky: #2f80ed;
-        --sky-bg: #dbe9ff;
-        --leaf: #2e9e4f;
-        --leaf-bg: #dcf5e3;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      [hidden] {
-        display: none !important;
-      }
-      body {
-        margin: 0;
-        font:
-          17px/1.6 system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        color: var(--ink);
-        background: var(--paper);
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 28px 18px 80px;
-      }
-      header {
-        border: 2px solid var(--line);
-        border-radius: 14px;
-        padding: 22px 24px;
-        background: #fff;
-        box-shadow: 6px 6px 0 var(--teal);
-      }
-      h1 {
-        font-size: 2rem;
-        line-height: 1.15;
-        margin: 0 0 8px;
-      }
-      .lead {
-        margin: 0;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
-      h2 {
-        font-size: 1.6rem;
-        margin: 40px 0 12px;
-        line-height: 1.2;
-      }
-      p {
-        margin: 0 0 12px;
-      }
-      .card {
-        border: 2px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px;
-        background: #fff;
-        margin: 14px 0;
-        overflow-x: auto;
-      }
-      .card.sun {
-        background: var(--sun-bg);
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        margin: 10px 0;
-        background: #fff;
-        font-size: 0.95rem;
-      }
-      th,
-      td {
-        border: 2px solid var(--line);
-        padding: 8px 10px;
-        text-align: left;
-        vertical-align: top;
-      }
-      th {
-        background: var(--sun-bg);
-      }
-      td.c {
-        text-align: center;
-        font-family: Georgia, serif;
-        font-size: 1.05rem;
-      }
-      tr.hit td {
-        background: var(--sun);
-        font-weight: 800;
-      }
-      .why {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--sun);
-        background: var(--sun-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 10px 0;
-      }
-      .ans {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--leaf);
-        background: var(--leaf-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 12px 0 6px;
-        font-weight: 700;
-        font-size: 1.05rem;
-      }
-      .check {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--coral);
-        background: var(--coral-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 8px 0;
-      }
-      .say {
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 8px 0;
-        background: var(--paper);
-      }
-      .steps {
-        counter-reset: s;
-        padding: 0;
-        margin: 10px 0;
-        list-style: none;
-      }
-      .steps li {
-        counter-increment: s;
-        position: relative;
-        padding: 6px 0 6px 44px;
-        margin: 4px 0;
-      }
-      .steps li::before {
-        content: counter(s);
-        position: absolute;
-        left: 0;
-        top: 6px;
-        width: 30px;
-        height: 30px;
-        border: 2px solid var(--line);
-        border-radius: 50%;
-        background: var(--sun);
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      footer {
-        margin-top: 50px;
-        font-size: 0.85rem;
-        color: var(--muted);
-        border-top: 2px solid var(--line);
-        padding-top: 12px;
-      }
-      /* simulador */
-      .sim {
-        border: 3px solid var(--line);
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 8px 8px 0 var(--sky);
-        padding: 16px 18px;
-        margin: 26px 0;
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        margin: 0 0 12px;
-      }
-      label b {
-        margin-right: 6px;
-      }
-      input[type="text"] {
-        font:
-          1.15rem Georgia,
-          serif;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 6px 10px;
-        width: 9em;
-        background: var(--paper);
-      }
-      button {
-        font: inherit;
-        font-weight: 800;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 6px 14px;
-        background: #fff;
-        box-shadow: 3px 3px 0 var(--line);
-        cursor: pointer;
-        color: var(--ink);
-      }
-      button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 var(--line);
-      }
-      button.main {
-        background: var(--sun);
-      }
-      button.ex {
-        font-family: Georgia, serif;
-        font-weight: 400;
-        padding: 2px 10px;
-        box-shadow: none;
-        background: var(--sun-bg);
-      }
-      button:disabled {
-        opacity: 0.45;
-        cursor: default;
-      }
-      .mode {
-        display: inline-flex;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        overflow: hidden;
-      }
-      .mode button {
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
-        font-weight: 700;
-      }
-      .mode button + button {
-        border-left: 2px solid var(--line);
-      }
-      .mode button[aria-pressed="true"] {
-        background: var(--sky-bg);
-      }
-      .tape {
-        display: flex;
-        overflow-x: auto;
-        padding: 34px 2px 8px;
-        margin: 6px 0 4px;
-      }
-      .cell {
-        position: relative;
-        flex: 0 0 44px;
-        height: 44px;
-        border: 2px solid var(--line);
-        margin-left: -2px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font:
-          1.25rem Georgia,
-          serif;
-        background: #fff;
-      }
-      .cell:first-child {
-        margin-left: 0;
-      }
-      .cell.blank {
-        color: var(--muted);
-      }
-      .cell.cur {
-        background: var(--sun);
-        font-weight: 800;
-      }
-      .cell.cur::before {
-        content: attr(data-q);
-        position: absolute;
-        top: -32px;
-        left: 50%;
-        transform: translateX(-50%);
-        font:
-          700 0.9rem Georgia,
-          serif;
-        color: #fff;
-        background: var(--coral);
-        border: 2px solid var(--line);
-        border-radius: 6px;
-        padding: 0 6px;
-        white-space: nowrap;
-      }
-      .status {
-        font-family: Georgia, serif;
-        font-size: 1.05rem;
-        margin: 8px 0 0;
-      }
-      svg {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-      svg text {
-        font-family: Georgia, serif;
-        font-size: 15px;
-        fill: var(--ink);
-      }
-      svg .st circle {
-        fill: #fff;
-        stroke: var(--line);
-        stroke-width: 2.5;
-      }
-      svg .st.on circle {
-        fill: var(--sun);
-      }
-      svg .st text {
-        font-weight: 700;
-        text-anchor: middle;
-        dominant-baseline: central;
-      }
-      svg path {
-        fill: none;
-        stroke: var(--line);
-        stroke-width: 2;
-      }
-      svg .loopr path,
-      svg .loopr text {
-        stroke: var(--coral);
-      }
-      svg .loopr text {
-        fill: var(--coral);
-        stroke: none;
-        font-weight: 700;
-      }
-      @media (max-width: 600px) {
-        h1 {
-          font-size: 1.6rem;
-        }
-        .cell {
-          flex-basis: 38px;
-          height: 38px;
-        }
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Math&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="estilo.css" />
   </head>
-  <body>
+  <body class="m-mt">
     <div class="wrap">
-      <header>
+      <header class="top">
+        <div class="strip" aria-hidden="true">
+          <span class="head">q0</span><i>⊛</i><i class="f">1</i
+          ><i class="f">1</i><i class="f">+</i><i class="f">1</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i>
+        </div>
         <h1>Máquina de Turing que soma em unário</h1>
         <p class="lead">
           Digite uma soma como 11+1 (que é 2 + 1), aperte Passo ou Rodar e
@@ -360,7 +31,27 @@
           início da fita, β é a célula vazia, E e D são esquerda e direita, e Π
           é a função de transição.
         </p>
+        <p class="meta">
+          <span>Amanda Dias · Matrícula 2510101045</span
+          ><span>Teoria da Computação (AL0349) · 2026/2</span>
+        </p>
       </header>
+      <div class="sec">
+        <span class="badge">1</span>
+        <h2>Computabilidade e Indecidibilidade</h2>
+        <a class="pill" href="./">↗ quatro formas</a>
+      </div>
+      <ul class="chips" aria-label="Conceitos">
+        <li>fita</li>
+        <li>cabeça</li>
+        <li>unidade de controle</li>
+        <li>estado</li>
+        <li>função de transição</li>
+        <li>algoritmo e máquina</li>
+        <li>reconhecer</li>
+        <li>decidir</li>
+        <li>Problema da Parada</li>
+      </ul>
 
       <h2>Como a máquina pensa</h2>
       <div class="card sun">
@@ -446,12 +137,12 @@
             >
               <path
                 d="M0 0 L10 5 L0 10"
-                style="fill: none; stroke: #ff6b57; stroke-width: 2"
+                style="fill: none; stroke: #e4572e; stroke-width: 2"
               />
             </marker>
           </defs>
           <path d="M10 120 H56" marker-end="url(#ar)" />
-          <text x="12" y="108">início</text>
+          <text x="4" y="100" style="font-size: 12px">início</text>
           <path d="M104 120 H194" marker-end="url(#ar)" />
           <text x="118" y="110">⊛/⊛,D</text>
           <path d="M244 120 H354" marker-end="url(#ar)" />

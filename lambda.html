@@ -5,282 +5,52 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Soma lambda passo a passo | Teoria da Computação</title>
-    <style>
-      :root {
-        --ink: #1f2433;
-        --muted: #5f6675;
-        --paper: #fffdf7;
-        --line: #1f2433;
-        --coral: #ff6b57;
-        --coral-bg: #ffe3dd;
-        --sun: #ffc531;
-        --sun-bg: #fff3c7;
-        --teal: #15a39a;
-        --teal-bg: #d4f3ef;
-        --grape: #7b4fd6;
-        --grape-bg: #e9dffb;
-        --sky: #2f80ed;
-        --sky-bg: #dbe9ff;
-        --leaf: #2e9e4f;
-        --leaf-bg: #dcf5e3;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font:
-          17px/1.6 system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        color: var(--ink);
-        background: var(--paper);
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 28px 18px 80px;
-      }
-      header {
-        border: 2px solid var(--line);
-        border-radius: 14px;
-        padding: 22px 24px;
-        background: #fff;
-        box-shadow: 6px 6px 0 var(--teal);
-      }
-      h1 {
-        font-size: 2rem;
-        line-height: 1.15;
-        margin: 0 0 8px;
-      }
-      .lead {
-        margin: 0;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
-      h2 {
-        font-size: 1.6rem;
-        margin: 40px 0 12px;
-        line-height: 1.2;
-      }
-      p {
-        margin: 0 0 12px;
-      }
-      .card {
-        border: 2px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px;
-        background: #fff;
-        margin: 14px 0;
-        overflow-x: auto;
-      }
-      .card.sun {
-        background: var(--sun-bg);
-      }
-      .why {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--sun);
-        background: var(--sun-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 10px 0;
-      }
-      .ans {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--leaf);
-        background: var(--leaf-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 12px 0 6px;
-        font-weight: 700;
-        font-size: 1.05rem;
-      }
-      .check {
-        border: 2px solid var(--line);
-        border-left: 10px solid var(--coral);
-        background: var(--coral-bg);
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin: 8px 0;
-      }
-      .steps {
-        counter-reset: s;
-        padding: 0;
-        margin: 10px 0;
-        list-style: none;
-      }
-      .steps li {
-        counter-increment: s;
-        position: relative;
-        padding: 6px 0 6px 44px;
-        margin: 4px 0;
-      }
-      .steps li::before {
-        content: counter(s);
-        position: absolute;
-        left: 0;
-        top: 6px;
-        width: 30px;
-        height: 30px;
-        border: 2px solid var(--line);
-        border-radius: 50%;
-        background: var(--sun);
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th,
-      td {
-        border: 2px solid var(--line);
-        padding: 6px 10px;
-        text-align: left;
-        vertical-align: top;
-      }
-      th {
-        background: var(--sun-bg);
-      }
-      .m {
-        font-family: Georgia, "Times New Roman", serif;
-      }
-      footer {
-        margin-top: 50px;
-        font-size: 0.85rem;
-        color: var(--muted);
-        border-top: 2px solid var(--line);
-        padding-top: 12px;
-      }
-      /* redutor */
-      .sim {
-        border: 3px solid var(--line);
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 8px 8px 0 var(--grape);
-        padding: 16px 18px;
-        margin: 26px 0;
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        margin: 0 0 12px;
-      }
-      input[type="text"] {
-        font:
-          1.15rem Georgia,
-          serif;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 4px 10px;
-        flex: 1 1 260px;
-        min-width: 0;
-        background: var(--paper);
-        color: var(--ink);
-      }
-      button {
-        font: inherit;
-        font-weight: 800;
-        border: 2px solid var(--line);
-        border-radius: 8px;
-        padding: 6px 14px;
-        background: #fff;
-        box-shadow: 3px 3px 0 var(--line);
-        cursor: pointer;
-        color: var(--ink);
-      }
-      button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 var(--line);
-      }
-      button.main {
-        background: var(--sun);
-      }
-      button.ex {
-        font-family: Georgia, serif;
-        font-weight: 400;
-        padding: 2px 10px;
-        box-shadow: none;
-        background: var(--grape-bg);
-      }
-      button:disabled {
-        opacity: 0.45;
-        cursor: default;
-      }
-      .hint {
-        color: var(--muted);
-        font-size: 0.9rem;
-        margin: 0 0 12px;
-      }
-      .routine {
-        font-family: Georgia, serif;
-        font-size: 1.1rem;
-        background: var(--paper);
-        border: 2px dashed var(--line);
-        border-radius: 8px;
-        padding: 10px 14px;
-        overflow-x: auto;
-        min-height: 3em;
-      }
-      .ln {
-        display: flex;
-        gap: 10px;
-        white-space: nowrap;
-        padding: 2px 6px;
-        border-radius: 6px;
-      }
-      .ln .n {
-        color: var(--muted);
-        min-width: 1.6em;
-      }
-      .ln .note {
-        color: var(--muted);
-        font-family: system-ui, sans-serif;
-        font-size: 0.85rem;
-        padding-top: 0.2em;
-        margin-left: auto;
-        padding-left: 18px;
-      }
-      .ln.now {
-        background: var(--sun-bg);
-        outline: 2px solid var(--sun);
-      }
-      mark {
-        background: none;
-        color: inherit;
-        border: 2px solid var(--coral);
-        border-radius: 5px;
-        padding: 0 2px;
-      }
-      .status {
-        margin: 10px 0 0;
-      }
-      @media (max-width: 600px) {
-        h1 {
-          font-size: 1.6rem;
-        }
-        .routine {
-          font-size: 1rem;
-        }
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Math&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="estilo.css" />
   </head>
-  <body>
+  <body class="m-lambda">
     <div class="wrap">
-      <header>
+      <header class="top">
+        <div class="strip" aria-hidden="true">
+          <span class="head">q0</span><i>⊛</i><i class="f">1</i
+          ><i class="f">1</i><i class="f">+</i><i class="f">1</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i><i>β</i
+          ><i>β</i><i>β</i>
+        </div>
         <h1>Soma lambda passo a passo</h1>
         <p class="lead">
           Escreva um termo, ou escolha um exemplo, e aperte Passo. Cada linha
           numerada faz uma redução, sempre no redex mais à esquerda e mais
           externo, como no roteiro da Aula 18.
         </p>
+        <p class="meta">
+          <span>Amanda Dias · Matrícula 2510101045</span
+          ><span>Teoria da Computação (AL0349) · 2026/2</span>
+        </p>
       </header>
+      <div class="sec">
+        <span class="badge">3</span>
+        <h2>Cálculo Lambda</h2>
+        <a class="pill" href="./">↗ quatro formas</a>
+      </div>
+      <ul class="chips" aria-label="Conceitos">
+        <li>abstração</li>
+        <li>aplicação</li>
+        <li>variáveis livres e ligadas</li>
+        <li>substituição</li>
+        <li>redução α</li>
+        <li>redução β</li>
+        <li>forma normal</li>
+        <li>booleanos de Church</li>
+        <li>numerais de Church</li>
+      </ul>
 
       <h2>Como ler as linhas</h2>
       <div class="card sun">
