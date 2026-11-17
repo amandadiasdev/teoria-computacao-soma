@@ -1,0 +1,729 @@
+<!doctype html>
+<!-- Redutor de termos lambda em ordem normal. Mostra o roteiro de linhas numeradas da Aula 18, marca o redex de cada linha e reconhece numerais de Church na forma normal. Material interativo do Trabalho Final de Teoria da Computação (AL0349). -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soma lambda passo a passo | Teoria da Computação</title>
+    <style>
+      :root {
+        --ink: #1f2433;
+        --muted: #5f6675;
+        --paper: #fffdf7;
+        --line: #1f2433;
+        --coral: #ff6b57;
+        --coral-bg: #ffe3dd;
+        --sun: #ffc531;
+        --sun-bg: #fff3c7;
+        --teal: #15a39a;
+        --teal-bg: #d4f3ef;
+        --grape: #7b4fd6;
+        --grape-bg: #e9dffb;
+        --sky: #2f80ed;
+        --sky-bg: #dbe9ff;
+        --leaf: #2e9e4f;
+        --leaf-bg: #dcf5e3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          17px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 18px 80px;
+      }
+      header {
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 22px 24px;
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--teal);
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+        margin: 40px 0 12px;
+        line-height: 1.2;
+      }
+      p {
+        margin: 0 0 12px;
+      }
+      .card {
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: #fff;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .card.sun {
+        background: var(--sun-bg);
+      }
+      .why {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--sun);
+        background: var(--sun-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 10px 0;
+      }
+      .ans {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--leaf);
+        background: var(--leaf-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 12px 0 6px;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .check {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--coral);
+        background: var(--coral-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 8px 0;
+      }
+      .steps {
+        counter-reset: s;
+        padding: 0;
+        margin: 10px 0;
+        list-style: none;
+      }
+      .steps li {
+        counter-increment: s;
+        position: relative;
+        padding: 6px 0 6px 44px;
+        margin: 4px 0;
+      }
+      .steps li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--line);
+        border-radius: 50%;
+        background: var(--sun);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 2px solid var(--line);
+        padding: 6px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--sun-bg);
+      }
+      .m {
+        font-family: Georgia, "Times New Roman", serif;
+      }
+      footer {
+        margin-top: 50px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        border-top: 2px solid var(--line);
+        padding-top: 12px;
+      }
+      /* redutor */
+      .sim {
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 8px 8px 0 var(--grape);
+        padding: 16px 18px;
+        margin: 26px 0;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 12px;
+      }
+      input[type="text"] {
+        font:
+          1.15rem Georgia,
+          serif;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 10px;
+        flex: 1 1 260px;
+        min-width: 0;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      button {
+        font: inherit;
+        font-weight: 800;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 14px;
+        background: #fff;
+        box-shadow: 3px 3px 0 var(--line);
+        cursor: pointer;
+        color: var(--ink);
+      }
+      button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0 var(--line);
+      }
+      button.main {
+        background: var(--sun);
+      }
+      button.ex {
+        font-family: Georgia, serif;
+        font-weight: 400;
+        padding: 2px 10px;
+        box-shadow: none;
+        background: var(--grape-bg);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 0 0 12px;
+      }
+      .routine {
+        font-family: Georgia, serif;
+        font-size: 1.1rem;
+        background: var(--paper);
+        border: 2px dashed var(--line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        overflow-x: auto;
+        min-height: 3em;
+      }
+      .ln {
+        display: flex;
+        gap: 10px;
+        white-space: nowrap;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .ln .n {
+        color: var(--muted);
+        min-width: 1.6em;
+      }
+      .ln .note {
+        color: var(--muted);
+        font-family: system-ui, sans-serif;
+        font-size: 0.85rem;
+        padding-top: 0.2em;
+        margin-left: auto;
+        padding-left: 18px;
+      }
+      .ln.now {
+        background: var(--sun-bg);
+        outline: 2px solid var(--sun);
+      }
+      mark {
+        background: none;
+        color: inherit;
+        border: 2px solid var(--coral);
+        border-radius: 5px;
+        padding: 0 2px;
+      }
+      .status {
+        margin: 10px 0 0;
+      }
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.6rem;
+        }
+        .routine {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Soma lambda passo a passo</h1>
+        <p class="lead">
+          Escreva um termo, ou escolha um exemplo, e aperte Passo. Cada linha
+          numerada faz uma redução, sempre no redex mais à esquerda e mais
+          externo, como no roteiro da Aula 18.
+        </p>
+      </header>
+
+      <h2>Como ler as linhas</h2>
+      <div class="card sun">
+        <ol class="steps">
+          <li>
+            <b>Redex.</b> O contorno vermelho marca o redex da linha, isto é,
+            uma abstração aplicada a um argumento. A próxima linha mostra esse
+            pedaço já reduzido.
+          </li>
+          <li>
+            <b>Nota.</b> À direita, a nota diz o que mudou. A redução β troca o
+            parâmetro pelo argumento, e "abre SOMA" troca o nome pelo seu termo.
+          </li>
+          <li>
+            <b>Fim.</b> Quando não sobra redex, o termo está em forma normal. Se
+            ele tem o formato λf.λx.f(…(x)), a página conta os f e diz qual
+            número saiu.
+          </li>
+        </ol>
+      </div>
+
+      <section class="sim" aria-label="Redutor">
+        <div class="row">
+          <input
+            id="term"
+            type="text"
+            value="SOMA 2 1"
+            spellcheck="false"
+            autocomplete="off"
+            aria-label="Termo lambda"
+          />
+        </div>
+        <p class="hint">
+          Digite \ no lugar de λ. Números viram numerais de Church, e nomes em
+          maiúsculas vêm da tabela abaixo.
+        </p>
+        <div class="row" id="presets">
+          <button class="ex" data-t="SOMA 2 1">SOMA 2 1</button>
+          <button class="ex" data-t="SOMA 1 2">SOMA 1 2</button>
+          <button class="ex" data-t="VERDADEIRO 1 0">VERDADEIRO 1 0</button>
+          <button class="ex" data-t="SESENAO VERDADEIRO 1 0">
+            SESENAO VERDADEIRO 1 0
+          </button>
+          <button class="ex" data-t="(λx.λy.x) y">(λx.λy.x) y</button>
+          <button class="ex" data-t="(λx.5) Ω">(λx.5) Ω</button>
+          <button class="ex" data-t="Ω">Ω</button>
+        </div>
+        <div class="row">
+          <button id="bStep" class="main">Passo</button>
+          <button id="bAll" class="main">Tudo</button>
+          <button id="bReset">Reiniciar</button>
+        </div>
+        <div class="routine" id="routine" aria-live="polite"></div>
+        <p class="status" id="status"></p>
+        <div id="out" aria-live="polite"></div>
+      </section>
+
+      <h2>Os nomes que a página conhece</h2>
+      <div class="card">
+        <table>
+          <tr>
+            <th>Nome</th>
+            <th>Termo</th>
+            <th>O que faz</th>
+          </tr>
+          <tr>
+            <td class="m">0, 1, 2, 3</td>
+            <td class="m">λf.λx.x, λf.λx.f(x), λf.λx.f(f(x)), …</td>
+            <td>O numeral n aplica f n vezes a x.</td>
+          </tr>
+          <tr>
+            <td class="m">SOMA</td>
+            <td class="m">λm.λn.λf.λx.m f (n f x)</td>
+            <td>Aplica f n vezes e depois mais m vezes.</td>
+          </tr>
+          <tr>
+            <td class="m">VERDADEIRO</td>
+            <td class="m">λa.λb.a</td>
+            <td>Fica com a primeira de duas opções.</td>
+          </tr>
+          <tr>
+            <td class="m">FALSO</td>
+            <td class="m">λa.λb.b</td>
+            <td>Fica com a segunda opção.</td>
+          </tr>
+          <tr>
+            <td class="m">SESENAO</td>
+            <td class="m">λx.λa.λb.x a b</td>
+            <td>Passa as duas opções para a condição x escolher.</td>
+          </tr>
+          <tr>
+            <td class="m">Ω</td>
+            <td class="m">(λx.x x) (λx.x x)</td>
+            <td>Reduz para ele mesmo e nunca termina.</td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>Por que a ordem normal</h2>
+      <div class="why">
+        Em (λx.5) Ω, a ordem normal reduz primeiro o redex de fora. O λx ignora
+        o argumento, o Ω some, e a resposta é 5. Quem reduz o Ω primeiro fica
+        preso para sempre. Pelo teorema de Church-Rosser, duas ordens que
+        terminam chegam à mesma forma normal. Por isso, uma conta feita à mão em
+        outra ordem chega ao mesmo 3 que esta página.
+      </div>
+      <div class="check">
+        <b>Captura.</b> Em (λx.λy.x) y, colocar o y de fora dentro de λy faria
+        ele virar o parâmetro. A página faz antes uma redução α, troca o λy por
+        λy′ e só então substitui. A resposta é λy′.y, com o y ainda livre.
+      </div>
+
+      <footer>
+        Fonte: Texto-Aula 18 (Cálculo Lambda), Teoria da Computação (AL0349),
+        Prof. Dr. Paulo Silas Severo de Souza, Unipampa, 2026/2. Redutor feito
+        para o Trabalho Final por Amanda Dias (2510101045).
+      </footer>
+    </div>
+
+    <script>
+      // Termos: var (variável), lam (abstração), app (aplicação) e const (nome da tabela ou numeral).
+      const $ = (id) => document.getElementById(id);
+      const MAX_STEPS = 60;
+      const MAX_NUM = 30;
+      const DEFS = {
+        SOMA: "λm.λn.λf.λx.m f (n f x)",
+        VERDADEIRO: "λa.λb.a",
+        FALSO: "λa.λb.b",
+        SESENAO: "λx.λa.λb.x a b",
+        Ω: "(λx.x x) (λx.x x)",
+      };
+      const V = (n) => ({ k: "var", n });
+      const L = (v, b) => ({ k: "lam", v, b });
+      const A = (f, a) => ({ k: "app", f, a });
+      const C = (n) => ({ k: "const", n });
+
+      // ---------- leitura do texto ----------
+      function tokenize(src) {
+        const toks = [];
+        const re = /\s*(λ|\\|\.|\(|\)|Ω|[a-z][a-z0-9_′']*|[A-Z][A-Z_]*|\d+)/y;
+        let i = 0;
+        while (i < src.length) {
+          if (/^\s*$/.test(src.slice(i))) break;
+          re.lastIndex = i;
+          const m = re.exec(src);
+          if (!m)
+            throw new Error(
+              `Símbolo desconhecido em "${src.slice(i).trim()}".`,
+            );
+          toks.push(m[1] === "\\" ? "λ" : m[1].replace(/'/g, "′"));
+          i = re.lastIndex;
+        }
+        return toks;
+      }
+
+      function parse(src) {
+        const toks = tokenize(src);
+        let p = 0;
+        const peek = () => toks[p];
+        const eat = (t) => {
+          if (toks[p] !== t)
+            throw new Error(`Esperava "${t}" e achou "${toks[p] ?? "fim"}".`);
+          p++;
+        };
+        const isVar = (t) => t && /^[a-z]/.test(t);
+        const startsAtom = (t) => t && t !== ")" && t !== "." && t !== "λ";
+
+        function lam() {
+          eat("λ");
+          const vs = [];
+          while (isVar(peek())) vs.push(toks[p++]);
+          if (!vs.length)
+            throw new Error("Depois de λ vem o nome do parâmetro.");
+          eat(".");
+          let body = term();
+          for (let i = vs.length - 1; i >= 0; i--) body = L(vs[i], body);
+          return body;
+        }
+        function atom() {
+          const t = toks[p++];
+          if (t === "(") {
+            const x = term();
+            eat(")");
+            return x;
+          }
+          if (isVar(t)) return V(t);
+          if (/^\d+$/.test(t)) {
+            if (Number(t) > MAX_NUM)
+              throw new Error(`Use numerais até ${MAX_NUM}.`);
+            return C(t);
+          }
+          if (DEFS[t]) return C(t);
+          throw new Error(`O nome ${t} não está na tabela.`);
+        }
+        function term() {
+          if (peek() === "λ") return lam();
+          if (!startsAtom(peek())) throw new Error("Falta um termo.");
+          let t = atom();
+          while (true) {
+            if (peek() === "λ") return A(t, lam());
+            if (!startsAtom(peek())) return t;
+            t = A(t, atom());
+          }
+        }
+        if (!toks.length) throw new Error("Escreva um termo.");
+        const t = term();
+        if (p < toks.length) throw new Error(`Sobrou "${toks[p]}" no fim.`);
+        return t;
+      }
+
+      function expand(c) {
+        if (/^\d+$/.test(c.n)) {
+          let body = V("x");
+          for (let i = 0; i < Number(c.n); i++) body = A(V("f"), body);
+          return L("f", L("x", body));
+        }
+        return parse(DEFS[c.n]);
+      }
+
+      // ---------- substituição e redução ----------
+      function free(t, s = new Set()) {
+        if (t.k === "var") s.add(t.n);
+        else if (t.k === "app") (free(t.f, s), free(t.a, s));
+        else if (t.k === "lam") {
+          const inner = free(t.b);
+          inner.delete(t.v);
+          inner.forEach((x) => s.add(x));
+        }
+        return s;
+      }
+
+      // Troca x por N em t. Renomeia um λ que capturaria uma variável livre de N.
+      function subst(t, x, N, renames) {
+        if (t.k === "var") return t.n === x ? N : t;
+        if (t.k === "const") return t;
+        if (t.k === "app")
+          return A(subst(t.f, x, N, renames), subst(t.a, x, N, renames));
+        if (t.v === x) return t;
+        const fvN = free(N);
+        if (fvN.has(t.v) && free(t.b).has(x)) {
+          const used = new Set([...fvN, ...free(t.b), x]);
+          let v2 = t.v + "′";
+          while (used.has(v2)) v2 += "′";
+          renames.push(`${t.v} para ${v2}`);
+          const b2 = subst(t.b, t.v, V(v2), renames);
+          return L(v2, subst(b2, x, N, renames));
+        }
+        return L(t.v, subst(t.b, x, N, renames));
+      }
+
+      // Ordem normal: o redex mais à esquerda e mais externo.
+      function find(t) {
+        if (t.k === "var") return null;
+        if (t.k === "const") return t.n === "Ω" ? t : null;
+        if (t.k === "lam") return find(t.b);
+        if (t.f.k === "lam" || t.f.k === "const")
+          return t.f.k === "lam" ? t : t.f;
+        return find(t.f) || find(t.a);
+      }
+
+      function replace(t, target, node) {
+        if (t === target) return node;
+        if (t.k === "lam") {
+          const b = replace(t.b, target, node);
+          return b === t.b ? t : L(t.v, b);
+        }
+        if (t.k === "app") {
+          const f = replace(t.f, target, node);
+          const a = replace(t.a, target, node);
+          return f === t.f && a === t.a ? t : A(f, a);
+        }
+        return t;
+      }
+
+      function step(t) {
+        const r = find(t);
+        if (!r) return null;
+        if (r.k === "const") {
+          const what = /^\d+$/.test(r.n)
+            ? `abre o numeral ${r.n}`
+            : `abre ${r.n}`;
+          return { term: replace(t, r, expand(r)), note: what };
+        }
+        const renames = [];
+        const body = subst(r.f.b, r.f.v, r.a, renames);
+        const arg = show(r.a);
+        let note =
+          arg.length <= 16
+            ? `redução β, ${r.f.v} → ${arg}`
+            : `redução β em ${r.f.v}`;
+        if (renames.length) note += ` (com redução α de ${renames.join(", ")})`;
+        return { term: replace(t, r, body), note };
+      }
+
+      // ---------- escrita do termo ----------
+      function spine(t, mark) {
+        const args = [];
+        while (t.k === "app" && t !== mark) {
+          args.unshift(t.a);
+          t = t.f;
+        }
+        return { head: t, args };
+      }
+
+      function show(t, mark, top = true) {
+        const wrap = (s) => (t === mark ? `<mark>${s}</mark>` : s);
+        if (t.k === "var" || t.k === "const") return wrap(t.n);
+        if (t.k === "lam") {
+          const s = wrap(`λ${t.v}.${show(t.b, mark, true)}`);
+          return top ? s : `(${s})`;
+        }
+        const { head, args } = spine(t, t === mark ? null : mark);
+        let s;
+        if (
+          head.k === "var" &&
+          args.length === 1 &&
+          !(args[0].k === "var" && args[0].n === head.n)
+        ) {
+          s = `${show(head, mark)}(${show(args[0], mark, true)})`;
+        } else {
+          const h =
+            head.k === "lam"
+              ? `(${show(head, mark, true)})`
+              : show(head, mark, true);
+          const parts = args.map((a) => {
+            if (a.k === "var" || a.k === "const") return show(a, mark);
+            return a.k === "lam"
+              ? show(a, mark, false)
+              : `(${show(a, mark, true)})`;
+          });
+          s = [h, ...parts].join(" ");
+        }
+        return wrap(s);
+      }
+
+      // ---------- leitura da resposta ----------
+      function meaning(t) {
+        if (t.k === "const") {
+          if (t.n === "0") return "É o numeral 0, o mesmo termo que FALSO.";
+          if (/^\d+$/.test(t.n)) return `É o numeral ${t.n}.`;
+          return `É o termo ${t.n}.`;
+        }
+        if (t.k === "lam" && t.b.k === "lam" && t.v !== t.b.v) {
+          const f = t.v;
+          const x = t.b.v;
+          let b = t.b.b;
+          let n = 0;
+          while (b.k === "app" && b.f.k === "var" && b.f.n === f) {
+            b = b.a;
+            n++;
+          }
+          if (b.k === "var" && b.n === x) {
+            const extra = n === 0 ? ", o mesmo termo que FALSO" : "";
+            return `Aplica f ${n} ${n === 1 ? "vez" : "vezes"} a x, então é o numeral ${n}${extra}.`;
+          }
+          if (t.b.b.k === "var" && t.b.b.n === f)
+            return "É o mesmo termo que VERDADEIRO.";
+        }
+        return "";
+      }
+
+      // ---------- tela ----------
+      const S = { lines: [], done: false, loop: false, err: "" };
+
+      function current() {
+        return S.lines[S.lines.length - 1];
+      }
+
+      function render() {
+        const last = S.lines.length - 1;
+        const html = S.lines
+          .map((ln, i) => {
+            const r = i === last && !S.done ? find(ln.term) : null;
+            const num = String(i).padStart(2, "0");
+            return `<div class="ln${i === last ? " now" : ""}"><span class="n">${num}</span><span>${show(ln.term, r)}</span><span class="note">${ln.note}</span></div>`;
+          })
+          .join("");
+        $("routine").innerHTML = S.err ? "" : html;
+        let st = "";
+        let out = "";
+        if (S.err) out = `<div class="check">${S.err}</div>`;
+        else if (S.loop)
+          out = `<div class="check">A linha ${String(last).padStart(2, "0")} repete um termo que já apareceu, então a redução nunca termina. O termo não tem forma normal.</div>`;
+        else if (S.done && S.lines.length > MAX_STEPS)
+          out = `<div class="check">Parou depois de ${MAX_STEPS} passos sem chegar a uma forma normal.</div>`;
+        else if (S.done) {
+          const t = current().term;
+          out = `<div class="ans">Forma normal: <span class="m">${show(t)}</span>. ${meaning(t)}</div>`;
+        } else
+          st = "O contorno vermelho marca o redex que o próximo Passo reduz.";
+        $("status").textContent = st;
+        $("out").innerHTML = out;
+        $("bStep").disabled = S.done;
+        $("bAll").disabled = S.done;
+      }
+
+      function advance() {
+        if (S.done) return;
+        const nx = step(current().term);
+        if (!nx) {
+          S.done = true;
+          return;
+        }
+        const txt = show(nx.term);
+        S.loop = S.lines.some((l) => show(l.term) === txt);
+        S.lines.push(nx);
+        if (S.loop || S.lines.length > MAX_STEPS) S.done = true;
+        else if (!find(nx.term)) S.done = true;
+      }
+
+      function reset() {
+        S.lines = [];
+        S.done = false;
+        S.loop = false;
+        S.err = "";
+        try {
+          const t = parse($("term").value);
+          S.lines.push({ term: t, note: "termo inicial" });
+          S.done = !find(t);
+        } catch (e) {
+          S.err = e.message;
+          S.done = true;
+        }
+        render();
+      }
+
+      $("bStep").onclick = () => {
+        advance();
+        render();
+      };
+      $("bAll").onclick = () => {
+        while (!S.done) advance();
+        render();
+      };
+      $("bReset").onclick = reset;
+      $("term").onchange = reset;
+      document.querySelectorAll("button.ex").forEach((b) => {
+        b.onclick = () => {
+          $("term").value = b.dataset.t;
+          reset();
+        };
+      });
+      reset();
+    </script>
+  </body>
+</html>

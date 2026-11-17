@@ -1,0 +1,777 @@
+<!doctype html>
+<!-- Soma em três estilos de programa (monolítico, iterativo e recursivo), com teste de mesa passo a passo e pilha de chamadas, na notação da Aula 19. Material interativo do Trabalho Final de Teoria da Computação (AL0349). -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soma em três programas | Teoria da Computação</title>
+    <style>
+      :root {
+        --ink: #1f2433;
+        --muted: #5f6675;
+        --paper: #fffdf7;
+        --line: #1f2433;
+        --coral: #ff6b57;
+        --coral-bg: #ffe3dd;
+        --sun: #ffc531;
+        --sun-bg: #fff3c7;
+        --teal: #15a39a;
+        --teal-bg: #d4f3ef;
+        --grape: #7b4fd6;
+        --grape-bg: #e9dffb;
+        --sky: #2f80ed;
+        --sky-bg: #dbe9ff;
+        --leaf: #2e9e4f;
+        --leaf-bg: #dcf5e3;
+        --cat: var(--sky);
+        --cat-bg: var(--sky-bg);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        font:
+          17px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 18px 80px;
+      }
+      header {
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 22px 24px;
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--teal);
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+        margin: 40px 0 12px;
+        line-height: 1.2;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin: 16px 0 8px;
+      }
+      p {
+        margin: 0 0 12px;
+      }
+      .card {
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: #fff;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .card.sun {
+        background: var(--sun-bg);
+      }
+      .why {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--sun);
+        background: var(--sun-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 10px 0;
+      }
+      .ans {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--leaf);
+        background: var(--leaf-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 12px 0 6px;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .check {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--coral);
+        background: var(--coral-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 8px 0;
+      }
+      .steps {
+        counter-reset: s;
+        padding: 0;
+        margin: 10px 0;
+        list-style: none;
+      }
+      .steps li {
+        counter-increment: s;
+        position: relative;
+        padding: 6px 0 6px 44px;
+        margin: 4px 0;
+      }
+      .steps li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--line);
+        border-radius: 50%;
+        background: var(--sun);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 2px solid var(--line);
+        padding: 5px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--sun-bg);
+      }
+      footer {
+        margin-top: 50px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        border-top: 2px solid var(--line);
+        padding-top: 12px;
+      }
+      /* executor */
+      .sim {
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 8px 8px 0 var(--cat);
+        padding: 16px 18px;
+        margin: 26px 0;
+      }
+      .sim.iter {
+        --cat: var(--teal);
+        --cat-bg: var(--teal-bg);
+      }
+      .sim.rec {
+        --cat: var(--grape);
+        --cat-bg: var(--grape-bg);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 12px;
+      }
+      .mode {
+        display: inline-flex;
+        flex-wrap: wrap;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .mode button {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        font-weight: 700;
+        padding: 6px 14px;
+      }
+      .mode button + button {
+        border-left: 2px solid var(--line);
+      }
+      .mode button[aria-pressed="true"] {
+        background: var(--cat-bg);
+      }
+      label b {
+        margin-right: 6px;
+        font-family: Georgia, serif;
+      }
+      input[type="number"] {
+        font:
+          1.15rem Georgia,
+          serif;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 8px;
+        width: 4.2em;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      button {
+        font: inherit;
+        font-weight: 800;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 14px;
+        background: #fff;
+        box-shadow: 3px 3px 0 var(--line);
+        cursor: pointer;
+        color: var(--ink);
+      }
+      button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0 var(--line);
+      }
+      button.main {
+        background: var(--sun);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .prog {
+        font-family: Georgia, serif;
+        font-size: 1.05rem;
+        background: var(--paper);
+        border: 2px dashed var(--line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        overflow-x: auto;
+      }
+      .pl {
+        display: flex;
+        white-space: pre;
+        padding: 1px 6px;
+        border-radius: 6px;
+      }
+      .pl .lab {
+        width: 5.2em;
+        flex: none;
+        font-weight: 700;
+      }
+      .pl .num {
+        width: 1.8em;
+        flex: none;
+        color: var(--muted);
+      }
+      .pl.now {
+        background: var(--cat-bg);
+        outline: 2px solid var(--cat);
+      }
+      .status {
+        margin: 10px 0;
+        min-height: 1.6em;
+      }
+      .mesa {
+        overflow-x: auto;
+        max-height: 420px;
+        overflow-y: auto;
+      }
+      .mesa td,
+      .mesa th {
+        font-family: Georgia, serif;
+        white-space: nowrap;
+        text-align: center;
+      }
+      .mesa th {
+        font-family: system-ui, sans-serif;
+      }
+      .mesa tr.now td {
+        background: var(--sun-bg);
+      }
+      .new {
+        background: var(--sky-bg);
+        outline: 2px solid var(--sky);
+        border-radius: 4px;
+        padding: 0 4px;
+      }
+      .jump {
+        font-weight: 800;
+        color: var(--coral);
+      }
+      .routine {
+        font-family: Georgia, serif;
+        font-size: 1.05rem;
+        background: var(--paper);
+        border: 2px dashed var(--line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        overflow-x: auto;
+      }
+      .ln {
+        white-space: nowrap;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .ln .n {
+        color: var(--muted);
+        margin-right: 8px;
+      }
+      .ln.now {
+        background: var(--sun-bg);
+        outline: 2px solid var(--sun);
+      }
+      .blank {
+        color: var(--coral);
+        font-weight: 700;
+      }
+      .fill {
+        color: var(--sky);
+        font-weight: 700;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 320px;
+      }
+      .frame {
+        font-family: Georgia, serif;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 10px;
+        background: #fff;
+      }
+      .frame.top {
+        background: var(--grape-bg);
+        box-shadow: 4px 4px 0 var(--grape);
+      }
+      .two {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .two > div {
+        flex: 1 1 300px;
+        min-width: 0;
+      }
+      .two > div:empty {
+        display: none;
+      }
+      @media (max-width: 700px) {
+        h1 {
+          font-size: 1.6rem;
+        }
+        .mode button {
+          padding: 6px 9px;
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>A mesma soma em três programas</h1>
+        <p class="lead">
+          Escolha o estilo, monolítico, iterativo ou recursivo, e aperte Passo.
+          A linha que roda fica marcada no programa, e o teste de mesa guarda o
+          estado depois de cada linha.
+        </p>
+      </header>
+
+      <h2>Como ler o teste de mesa</h2>
+      <div class="card sun">
+        <ol class="steps">
+          <li>
+            <b>Estado.</b> É o valor de cada variável naquele instante. A caixa
+            azul marca o valor que a linha acabou de escrever.
+          </li>
+          <li>
+            <b>Fluxo de controle.</b> É a ordem das linhas. A coluna Próxima
+            fica vermelha quando há desvio, isto é, quando a próxima linha não é
+            a de baixo.
+          </li>
+          <li>
+            <b>Pilha de chamadas.</b> No recursivo, o estado mora nas chamadas
+            abertas. Cada uma guarda o seu y e espera a resposta da de baixo.
+          </li>
+        </ol>
+      </div>
+
+      <section class="sim" id="sim" aria-label="Executor">
+        <div class="row">
+          <div class="mode" role="group" aria-label="Estilo do programa">
+            <button data-s="mono" aria-pressed="true">Monolítico</button>
+            <button data-s="iter" aria-pressed="false">Iterativo</button>
+            <button data-s="rec" aria-pressed="false">Recursivo</button>
+          </div>
+        </div>
+        <div class="row">
+          <label
+            ><b>x</b><input id="x" type="number" min="0" max="20" value="2"
+          /></label>
+          <label
+            ><b>y</b><input id="y" type="number" min="0" max="8" value="1"
+          /></label>
+          <button id="bStep" class="main">Passo</button>
+          <button id="bAll" class="main">Tudo</button>
+          <button id="bReset">Reiniciar</button>
+        </div>
+        <div class="two">
+          <div class="prog" id="prog"></div>
+          <div id="side"></div>
+        </div>
+        <p class="status" id="status" aria-live="polite"></p>
+        <div id="table"></div>
+        <div id="out" aria-live="polite"></div>
+      </section>
+
+      <h2>Os três lado a lado em soma(2, 1)</h2>
+      <div class="card">
+        <table>
+          <tr>
+            <th>Aspecto</th>
+            <th>Monolítico</th>
+            <th>Iterativo</th>
+            <th>Recursivo</th>
+          </tr>
+          <tr>
+            <td>Como repete</td>
+            <td>Desvio VÁ PARA de volta a LOOP</td>
+            <td>Laço ENQUANTO</td>
+            <td>A função chama a si mesma</td>
+          </tr>
+          <tr>
+            <td>Como para</td>
+            <td>O desvio condicional leva ao FIM</td>
+            <td>O teste do laço dá não</td>
+            <td>A chamada chega ao caso-base y = 0</td>
+          </tr>
+          <tr>
+            <td>Onde fica o estado</td>
+            <td>Em resultado e contador</td>
+            <td>Em resultado e contador</td>
+            <td>No y de cada chamada aberta, na pilha</td>
+          </tr>
+          <tr>
+            <td>Repetições</td>
+            <td>1 volta pelo LOOP</td>
+            <td>1 volta no laço</td>
+            <td>2 chamadas, com y = 1 e 0</td>
+          </tr>
+        </table>
+      </div>
+
+      <h2>Mesmo poder, organização diferente</h2>
+      <div class="why">
+        Os três programas calculam a mesma função e repetem o mesmo +1 y vezes.
+        O monolítico fica perto da máquina, com instruções em sequência e
+        desvios. O recursivo tem a forma da recursão primitiva de Kleene, com
+        soma(x, 0) = x e soma(x, y + 1) = soma(x, y) + 1.
+      </div>
+      <div class="check">
+        <b>Onde mora o perigo.</b> Sem a linha 5, o contador nunca chega a 0, e
+        o iterativo vira um laço infinito. No recursivo, RETORNAR soma(x, y) + 1
+        chama sempre o mesmo y, nunca chega ao caso-base, e a pilha cresce até
+        estourar.
+      </div>
+
+      <footer>
+        Fonte: Texto-Aula 19 (Programas monolíticos, iterativos e recursivos),
+        Teoria da Computação (AL0349), Prof. Dr. Paulo Silas Severo de Souza,
+        Unipampa, 2026/2. Executor feito para o Trabalho Final por Amanda Dias
+        (2510101045).
+      </footer>
+    </div>
+
+    <script>
+      // Cada estilo gera uma lista de eventos. O passo k mostra os eventos 0 a k - 1.
+      const $ = (id) => document.getElementById(id);
+      const PROGS = {
+        mono: [
+          ["INÍCIO:", "1", "resultado := x"],
+          ["", "2", "contador := y"],
+          ["LOOP:", "3", "SE contador = 0 ENTÃO VÁ PARA FIM"],
+          ["", "4", "resultado := resultado + 1"],
+          ["", "5", "contador := contador - 1"],
+          ["", "6", "VÁ PARA LOOP"],
+          ["FIM:", "7", "RETORNAR resultado"],
+        ],
+        iter: [
+          ["", "1", "resultado := x"],
+          ["", "2", "contador := y"],
+          ["", "3", "ENQUANTO contador ≠ 0 FAÇA"],
+          ["", "4", "    resultado := resultado + 1"],
+          ["", "5", "    contador := contador - 1"],
+          ["", "6", "FIM ENQUANTO"],
+          ["", "7", "RETORNAR resultado"],
+        ],
+        rec: [
+          ["", "", "função soma(x, y)"],
+          ["", "", "    SE y = 0 ENTÃO"],
+          ["", "", "        RETORNAR x"],
+          ["", "", "    SENÃO"],
+          ["", "", "        RETORNAR soma(x, y - 1) + 1"],
+          ["", "", "    FIM SE"],
+          ["", "", "fim função"],
+        ],
+      };
+      const S = { style: "mono", x: 2, y: 1, k: 0, ev: [] };
+
+      function clamp(v, max) {
+        const n = Math.floor(Number(v));
+        return Number.isFinite(n) ? Math.min(Math.max(n, 0), max) : 0;
+      }
+
+      // Monolítico e iterativo têm o mesmo fluxo de controle, linha a linha.
+      function loopEvents(x, y, mono) {
+        const ev = [];
+        let r = x;
+        let c = y;
+        ev.push({
+          ln: 1,
+          r,
+          c: "",
+          w: "r",
+          next: 2,
+          say: `resultado recebe x = ${x}.`,
+        });
+        ev.push({
+          ln: 2,
+          r,
+          c,
+          w: "c",
+          next: 3,
+          say: `contador recebe y = ${y}.`,
+        });
+        while (true) {
+          if (c === 0) {
+            ev.push({
+              ln: 3,
+              r,
+              c,
+              next: 7,
+              say: mono
+                ? "O teste contador = 0 dá sim. O desvio condicional pula para FIM."
+                : "O teste contador ≠ 0 dá não. O laço termina e a máquina vai para a linha 7.",
+            });
+            break;
+          }
+          ev.push({
+            ln: 3,
+            r,
+            c,
+            next: 4,
+            say: mono
+              ? "O teste contador = 0 dá não. A máquina segue para a linha de baixo."
+              : "O teste contador ≠ 0 dá sim. A máquina entra no corpo do laço.",
+          });
+          r++;
+          ev.push({
+            ln: 4,
+            r,
+            c,
+            w: "r",
+            next: 5,
+            say: `resultado ganha +1 e vale ${r}.`,
+          });
+          c--;
+          ev.push({
+            ln: 5,
+            r,
+            c,
+            w: "c",
+            next: 6,
+            say: `contador perde 1 e vale ${c}.`,
+          });
+          ev.push({
+            ln: 6,
+            r,
+            c,
+            next: 3,
+            say: mono
+              ? "Desvio incondicional. VÁ PARA LOOP volta sempre para a linha 3."
+              : "FIM ENQUANTO manda a máquina de volta ao teste da linha 3.",
+          });
+        }
+        ev.push({ ln: 7, r, c, next: "fim", say: `RETORNAR devolve ${r}.` });
+        return ev;
+      }
+
+      // Recursivo: descida abre uma chamada por linha, subida preenche os traços.
+      function recEvents(x, y) {
+        const ev = [];
+        for (let d = 0; d <= y; d++) {
+          const yy = y - d;
+          ev.push({
+            up: false,
+            d,
+            ln: yy === 0 ? 3 : 5,
+            say:
+              yy === 0
+                ? `soma(${x}, 0) chega ao caso-base e devolve x = ${x} direto.`
+                : `soma(${x}, ${yy}) não sabe a resposta. Ela chama soma(${x}, ${yy - 1}) e espera.`,
+          });
+        }
+        for (let d = y - 1; d >= 0; d--) {
+          const yy = y - d;
+          ev.push({
+            up: true,
+            d,
+            ln: 5,
+            say: `soma(${x}, ${yy - 1}) devolveu ${x + yy - 1}. soma(${x}, ${yy}) soma 1 e devolve ${x + yy}.`,
+          });
+        }
+        return ev;
+      }
+
+      function build() {
+        S.ev =
+          S.style === "rec"
+            ? recEvents(S.x, S.y)
+            : loopEvents(S.x, S.y, S.style === "mono");
+      }
+
+      function progHtml(now) {
+        return PROGS[S.style]
+          .map(([lab, num, txt], i) => {
+            const on = now === i + 1 ? " now" : "";
+            const n =
+              S.style === "rec" ? "" : `<span class="num">${num}</span>`;
+            const l =
+              S.style === "mono" ? `<span class="lab">${lab}</span>` : "";
+            return `<div class="pl${on}">${l}${n}<span>${txt}</span></div>`;
+          })
+          .join("");
+      }
+
+      function mesaHtml() {
+        const rows = S.ev.slice(0, S.k).map((e, i) => {
+          const cell = (v, key) =>
+            e.w === key ? `<span class="new">${v}</span>` : v;
+          const jump = e.next !== "fim" && e.next !== e.ln + 1;
+          const nx = e.next === "fim" ? "fim" : e.next;
+          return `<tr class="${i === S.k - 1 ? "now" : ""}"><td>${i + 1}</td><td>${e.ln}</td><td>${cell(e.r, "r")}</td><td>${cell(e.c, "c")}</td><td${jump ? ' class="jump"' : ""}>${nx}</td></tr>`;
+        });
+        return `<div class="mesa"><table><tr><th>Passo</th><th>Linha</th><th>resultado</th><th>contador</th><th>Próxima</th></tr>${rows.join("")}</table></div>`;
+      }
+
+      // Linha i (0 = topo) do roteiro recursivo, igual ao roteiro de linhas da Aula 19.
+      function recLine(i, cur) {
+        const yy = S.y - i;
+        const pad = "[" + String(i + 1).padStart(2, "0") + "]";
+        const head = `<span class="n">${pad}</span>soma(${S.x}, ${yy})`;
+        if (yy === 0) return head + ` = <span class="fill">${S.x}</span>`;
+        const open = ` = soma(${S.x}, ${yy - 1}) + 1`;
+        const filled = cur.up ? cur.d <= i : false;
+        if (!filled || S.k <= S.y + 1)
+          return head + open + ` = <span class="blank">___</span> + 1`;
+        const below = S.x + yy - 1;
+        return (
+          head +
+          open +
+          ` = <span class="fill">${below}</span> + 1 = <span class="fill">${below + 1}</span>`
+        );
+      }
+
+      function recHtml() {
+        if (S.k === 0) return { lines: "", stack: "" };
+        const cur = S.ev[S.k - 1];
+        const shown = Math.min(S.k, S.y + 1);
+        let lines = "";
+        for (let i = 0; i < shown; i++) {
+          const ind = i * 1.4;
+          lines += `<div class="ln${i === cur.d ? " now" : ""}" style="margin-left:${ind}em">${recLine(i, cur)}</div>`;
+        }
+        let stack = "";
+        for (let d = cur.d; d >= 0; d--) {
+          const yy = S.y - d;
+          const st = d === cur.d ? " top" : "";
+          const wait =
+            d === cur.d
+              ? cur.up || yy === 0
+                ? "devolvendo"
+                : "chamando"
+              : "esperando";
+          stack += `<div class="frame${st}">soma(${S.x}, ${yy}), ${wait}</div>`;
+        }
+        return { lines, stack };
+      }
+
+      function render() {
+        const sim = $("sim");
+        sim.className = "sim " + S.style;
+        document
+          .querySelectorAll(".mode button")
+          .forEach((b) =>
+            b.setAttribute("aria-pressed", String(b.dataset.s === S.style)),
+          );
+        const cur = S.k ? S.ev[S.k - 1] : null;
+        $("prog").innerHTML = progHtml(cur ? cur.ln : 0);
+        $("status").textContent = cur
+          ? cur.say
+          : "Aperte Passo para rodar a primeira linha.";
+        if (S.style === "rec") {
+          const r = recHtml();
+          $("side").innerHTML = r.stack
+            ? `<h3>Pilha de chamadas</h3><div class="stack">${r.stack}</div>`
+            : `<h3>Pilha de chamadas</h3><p>Vazia.</p>`;
+          $("table").innerHTML = r.lines
+            ? `<div class="routine">${r.lines}</div>`
+            : "";
+        } else {
+          $("side").innerHTML = "";
+          $("table").innerHTML = mesaHtml();
+        }
+        const done = S.k === S.ev.length;
+        const sum = S.x + S.y;
+        const vz = S.y === 1 ? "volta" : "voltas";
+        const how = {
+          mono: `com ${S.y} ${vz} pelo LOOP`,
+          iter: `com ${S.y} ${vz} no laço`,
+          rec: `com ${S.y + 1} ${S.y === 0 ? "chamada" : "chamadas"}`,
+        }[S.style];
+        $("out").innerHTML = done
+          ? `<div class="ans">soma(${S.x}, ${S.y}) = ${sum}, ${how}.</div>`
+          : "";
+        $("bStep").disabled = done;
+        $("bAll").disabled = done;
+      }
+
+      function reset() {
+        S.x = clamp($("x").value, 20);
+        S.y = clamp($("y").value, 8);
+        $("x").value = S.x;
+        $("y").value = S.y;
+        S.k = 0;
+        build();
+        render();
+      }
+
+      $("bStep").onclick = () => {
+        S.k = Math.min(S.k + 1, S.ev.length);
+        render();
+      };
+      $("bAll").onclick = () => {
+        S.k = S.ev.length;
+        render();
+      };
+      $("bReset").onclick = reset;
+      $("x").onchange = reset;
+      $("y").onchange = reset;
+      document.querySelectorAll(".mode button").forEach((b) => {
+        b.onclick = () => {
+          S.style = b.dataset.s;
+          reset();
+        };
+      });
+      reset();
+    </script>
+  </body>
+</html>

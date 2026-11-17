@@ -1,0 +1,211 @@
+<!doctype html>
+<!-- Página inicial dos materiais interativos do Trabalho Final de Teoria da Computação (AL0349). Liga as quatro páginas que fazem a mesma soma 2 + 1 = 3 em quatro modelos de computação. -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soma 2 + 1 em quatro modelos | Teoria da Computação</title>
+    <style>
+      :root {
+        --ink: #1f2433;
+        --muted: #5f6675;
+        --paper: #fffdf7;
+        --line: #1f2433;
+        --coral: #ff6b57;
+        --coral-bg: #ffe3dd;
+        --sun: #ffc531;
+        --sun-bg: #fff3c7;
+        --teal: #15a39a;
+        --teal-bg: #d4f3ef;
+        --sky: #2f80ed;
+        --sky-bg: #dbe9ff;
+        --leaf: #2e9e4f;
+        --leaf-bg: #dcf5e3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        font:
+          17px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 18px 80px;
+      }
+      header {
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 22px 24px;
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--teal);
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+        margin: 40px 0 12px;
+        line-height: 1.2;
+      }
+      p {
+        margin: 0 0 12px;
+      }
+      .card {
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: #fff;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .card.sun {
+        background: var(--sun-bg);
+      }
+      .formula {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.15rem;
+        background: #fff;
+        border: 2px dashed var(--line);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+      .why {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--sun);
+        background: var(--sun-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 10px 0;
+      }
+      .ans {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--leaf);
+        background: var(--leaf-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 12px 0 6px;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .check {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--coral);
+        background: var(--coral-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 8px 0;
+      }
+      .steps {
+        counter-reset: s;
+        padding: 0;
+        margin: 10px 0;
+        list-style: none;
+      }
+      .steps li {
+        counter-increment: s;
+        position: relative;
+        padding: 6px 0 6px 44px;
+        margin: 4px 0;
+      }
+      .steps li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--line);
+        border-radius: 50%;
+        background: var(--sun);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      footer {
+        margin-top: 50px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        border-top: 2px solid var(--line);
+        padding-top: 12px;
+      }
+      a.page {
+        display: block;
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin: 14px 0;
+        background: #fff;
+        color: var(--ink);
+        text-decoration: none;
+        box-shadow: 6px 6px 0 var(--c);
+      }
+      a.page b {
+        font-size: 1.15rem;
+      }
+      a.page span {
+        display: block;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>2 + 1 = 3 em quatro modelos</h1>
+        <p class="lead">
+          Cada página faz a mesma soma num modelo de computação diferente e
+          mostra a conta passo a passo.
+        </p>
+      </header>
+      <a class="page" href="mt.html" style="--c: var(--coral)"
+        ><b>Máquina de Turing</b
+        ><span
+          >A fita, a cabeça e a função de transição Π somando 11+1, que é 2 +
+          1.</span
+        ></a
+      >
+      <a class="page" href="kleene.html" style="--c: var(--sky)"
+        ><b>Funções recursivas de Kleene</b
+        ><span
+          >soma(x, y) por recursão primitiva, com descida e subida.</span
+        ></a
+      >
+      <a class="page" href="lambda.html" style="--c: var(--grape)"
+        ><b>Cálculo lambda</b
+        ><span>SOMA 2 1 reduzido em ordem normal até o numeral 3.</span></a
+      >
+      <a class="page" href="programas.html" style="--c: var(--teal)"
+        ><b>Programas</b
+        ><span
+          >A soma monolítica, iterativa e recursiva, com teste de mesa.</span
+        ></a
+      >
+      <footer>
+        Teoria da Computação (AL0349), Prof. Dr. Paulo Silas Severo de Souza,
+        Unipampa, 2026/2. Trabalho Final de Amanda Dias (2510101045).
+      </footer>
+    </div>
+  </body>
+</html>

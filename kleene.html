@@ -1,0 +1,500 @@
+<!doctype html>
+<!-- Montador da soma por recursão primitiva (funções recursivas de Kleene). Mostra o roteiro de linhas [01] da Aula 17, com descida e subida, e a árvore que monta soma a partir de Proj e S. Material interativo do Trabalho Final de Teoria da Computação (AL0349). -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soma de Kleene passo a passo | Teoria da Computação</title>
+    <style>
+      :root {
+        --ink: #1f2433;
+        --muted: #5f6675;
+        --paper: #fffdf7;
+        --line: #1f2433;
+        --coral: #ff6b57;
+        --coral-bg: #ffe3dd;
+        --sun: #ffc531;
+        --sun-bg: #fff3c7;
+        --teal: #15a39a;
+        --teal-bg: #d4f3ef;
+        --sky: #2f80ed;
+        --sky-bg: #dbe9ff;
+        --leaf: #2e9e4f;
+        --leaf-bg: #dcf5e3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        font:
+          17px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 18px 80px;
+      }
+      header {
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 22px 24px;
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--teal);
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+        margin: 40px 0 12px;
+        line-height: 1.2;
+      }
+      p {
+        margin: 0 0 12px;
+      }
+      .card {
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: #fff;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .card.sun {
+        background: var(--sun-bg);
+      }
+      .formula {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.15rem;
+        background: #fff;
+        border: 2px dashed var(--line);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+      .why {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--sun);
+        background: var(--sun-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 10px 0;
+      }
+      .ans {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--leaf);
+        background: var(--leaf-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 12px 0 6px;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .check {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--coral);
+        background: var(--coral-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 8px 0;
+      }
+      .steps {
+        counter-reset: s;
+        padding: 0;
+        margin: 10px 0;
+        list-style: none;
+      }
+      .steps li {
+        counter-increment: s;
+        position: relative;
+        padding: 6px 0 6px 44px;
+        margin: 4px 0;
+      }
+      .steps li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--line);
+        border-radius: 50%;
+        background: var(--sun);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      footer {
+        margin-top: 50px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        border-top: 2px solid var(--line);
+        padding-top: 12px;
+      }
+      /* montador */
+      .sim {
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 8px 8px 0 var(--teal);
+        padding: 16px 18px;
+        margin: 26px 0;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 12px;
+      }
+      label b {
+        margin-right: 6px;
+        font-family: Georgia, serif;
+      }
+      input[type="number"] {
+        font:
+          1.15rem Georgia,
+          serif;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 8px;
+        width: 4.2em;
+        background: var(--paper);
+      }
+      button {
+        font: inherit;
+        font-weight: 800;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 14px;
+        background: #fff;
+        box-shadow: 3px 3px 0 var(--line);
+        cursor: pointer;
+        color: var(--ink);
+      }
+      button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0 var(--line);
+      }
+      button.main {
+        background: var(--sun);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .phase {
+        font-weight: 800;
+        border: 2px solid var(--line);
+        border-radius: 6px;
+        padding: 0 10px;
+        background: var(--teal-bg);
+      }
+      .routine {
+        font-family: Georgia, serif;
+        font-size: 1.1rem;
+        background: var(--paper);
+        border: 2px dashed var(--line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        overflow-x: auto;
+        min-height: 3em;
+      }
+      .ln {
+        white-space: nowrap;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .ln .n {
+        color: var(--muted);
+        margin-right: 8px;
+      }
+      .ln.now {
+        background: var(--sun-bg);
+        outline: 2px solid var(--sun);
+      }
+      .blank {
+        color: var(--coral);
+        font-weight: 700;
+      }
+      .fill {
+        color: var(--sky);
+        font-weight: 700;
+      }
+      .status {
+        margin: 10px 0 0;
+      }
+      svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      svg text {
+        font-family: Georgia, serif;
+        font-size: 15px;
+        fill: var(--ink);
+        text-anchor: middle;
+      }
+      svg rect {
+        fill: #fff;
+        stroke: var(--line);
+        stroke-width: 2;
+      }
+      svg .on rect {
+        fill: var(--sun);
+      }
+      svg path {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 2;
+      }
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.6rem;
+        }
+        .routine {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Soma de Kleene passo a passo</h1>
+        <p class="lead">
+          Escolha x e y e aperte Passo para montar soma(x, y) com o roteiro de
+          linhas da Aula 17. Na descida, cada linha deixa um traço. Na subida, o
+          valor de baixo preenche o traço de cima.
+        </p>
+      </header>
+
+      <h2>As duas regras da soma</h2>
+      <div class="formula">
+        soma(x, 0) = x<br />soma(x, y + 1) = S(soma(x, y))
+      </div>
+      <div class="card sun">
+        <ol class="steps">
+          <li>
+            <b>Caso base.</b> Somar 0 deixa x como está. No formato f(x, 0) =
+            g(x), a peça g é a projeção Proj¹₁, que devolve a própria entrada.
+          </li>
+          <li>
+            <b>Passo.</b> Somar y + 1 é somar y e depois apertar +1. No formato
+            f(x, y + 1) = h(x, y, f(x, y)), a peça h é S ∘ Proj³₃. Ela pega o
+            terceiro valor e soma 1.
+          </li>
+          <li>
+            <b>Contador.</b> É o contador com os botões zerar e +1. Para fazer 2
+            + 1, parta do 2 e aperte +1 uma vez.
+          </li>
+        </ol>
+      </div>
+
+      <section class="sim" aria-label="Montador">
+        <div class="row">
+          <label
+            ><b>x</b><input id="x" type="number" min="0" max="20" value="2"
+          /></label>
+          <label
+            ><b>y</b><input id="y" type="number" min="0" max="12" value="1"
+          /></label>
+          <button id="bStep" class="main">Passo</button>
+          <button id="bAll" class="main">Tudo</button>
+          <button id="bReset">Reiniciar</button>
+          <span class="phase" id="phase">Descida</span>
+        </div>
+        <div class="routine" id="routine" aria-live="polite"></div>
+        <p class="status" id="status"></p>
+        <div id="out" aria-live="polite"></div>
+      </section>
+
+      <h2>A árvore que monta a soma</h2>
+      <p>
+        A peça usada no último passo fica amarela. A descida usa o passo h, e o
+        caso base usa g.
+      </p>
+      <div class="card">
+        <svg
+          viewBox="0 0 700 230"
+          role="img"
+          aria-label="Árvore: soma é recursão primitiva com caso base g igual a Proj¹₁ e passo h igual a S composta com Proj³₃"
+        >
+          <path d="M350 58 L190 108" />
+          <path d="M350 58 L510 108" />
+          <path d="M510 156 L445 186" />
+          <path d="M510 156 L585 186" />
+          <g id="nRoot">
+            <rect x="250" y="12" width="200" height="46" rx="8" />
+            <text x="350" y="32">soma</text>
+            <text x="350" y="50" style="font-size: 13px">
+              recursão primitiva
+            </text>
+          </g>
+          <g id="nG">
+            <rect x="95" y="108" width="190" height="48" rx="8" />
+            <text x="190" y="128">caso base g</text>
+            <text x="190" y="148">Proj¹₁</text>
+          </g>
+          <g id="nH">
+            <rect x="400" y="108" width="220" height="48" rx="8" />
+            <text x="510" y="128">passo h</text>
+            <text x="510" y="148">composição S ∘ Proj³₃</text>
+          </g>
+          <g id="nS">
+            <rect x="400" y="186" width="90" height="36" rx="18" />
+            <text x="445" y="209">S</text>
+          </g>
+          <g id="nP">
+            <rect x="535" y="186" width="100" height="36" rx="18" />
+            <text x="585" y="209">Proj³₃</text>
+          </g>
+        </svg>
+      </div>
+
+      <h2>Por que esta conta sempre termina</h2>
+      <div class="why">
+        Cada linha da descida diminui y em 1, então depois de y linhas a conta
+        chega ao caso base. A recursão primitiva lembra um laço for, porque o
+        número de voltas é conhecido desde o início. Por isso soma é uma função
+        total.
+      </div>
+      <div class="check">
+        <b>Onde mora o perigo:</b> só a minimização, f(x) = min{ y | g(x, y) = 0
+        }, pode rodar para sempre. Em metade(5), a busca nunca acha y + y = 5, e
+        a função fica sem resposta. É o mesmo papel do loop na Máquina de
+        Turing.
+      </div>
+
+      <footer>
+        Fonte: Texto-Aula 17 (Funções Recursivas de Kleene), Teoria da
+        Computação (AL0349), Prof. Dr. Paulo Silas Severo de Souza, Unipampa,
+        2026/2. Montador feito para o Trabalho Final por Amanda Dias
+        (2510101045).
+      </footer>
+    </div>
+
+    <script>
+      // Estado: k conta quantos passos já foram mostrados.
+      // Passos 1 a y + 1 abrem as linhas da descida. Passos y + 2 a 2y + 1 fazem a subida.
+      const $ = (id) => document.getElementById(id);
+      const S = { x: 2, y: 1, k: 0 };
+      const pad = (n) => "[" + String(n).padStart(2, "0") + "]";
+
+      function clamp(v, max) {
+        const n = Math.floor(Number(v));
+        return Number.isFinite(n) ? Math.min(Math.max(n, 0), max) : 0;
+      }
+
+      function total() {
+        return 2 * S.y + 1;
+      }
+
+      // Texto da linha i (1 = topo). A linha i calcula soma(x, y - i + 1).
+      function lineHtml(i) {
+        const yy = S.y - i + 1;
+        const head = `<span class="n">${pad(i)}</span>soma(${S.x}, ${yy})`;
+        if (yy === 0) return head + ` = <span class="fill">${S.x}</span>`;
+        const open = ` = S(soma(${S.x}, ${yy - 1}))`;
+        const filledAt = S.y + 1 + (S.y + 1 - i);
+        if (S.k < filledAt)
+          return head + open + ` = S(<span class="blank">___</span>)`;
+        const below = S.x + yy - 1;
+        return (
+          head +
+          open +
+          ` = S(<span class="fill">${below}</span>) = <span class="fill">${below + 1}</span>`
+        );
+      }
+
+      function nowLine() {
+        if (S.k === 0) return 0;
+        if (S.k <= S.y + 1) return S.k;
+        return S.y + 1 - (S.k - S.y - 1);
+      }
+
+      function status() {
+        if (S.k === 0) return "Aperte Passo para abrir a primeira linha.";
+        const i = nowLine();
+        const yy = S.y - i + 1;
+        if (S.k <= S.y)
+          return `Descida: soma(${S.x}, ${yy}) depende de soma(${S.x}, ${yy - 1}), que ainda não se sabe. Fica um traço.`;
+        if (S.k === S.y + 1)
+          return `Caso base: soma(${S.x}, 0) = ${S.x}. O valor sai direto, sem traço.`;
+        return `Subida: o traço recebe ${S.x + yy - 1}, e S aperta +1. O contador mostra ${S.x + yy}.`;
+      }
+
+      function mark() {
+        const i = nowLine();
+        const yy = S.y - i + 1;
+        const useG = S.k > 0 && yy === 0;
+        const useH = S.k > 0 && yy > 0;
+        $("nRoot").classList.toggle("on", S.k > 0);
+        $("nG").classList.toggle("on", useG);
+        ["nH", "nS", "nP"].forEach((id) => $(id).classList.toggle("on", useH));
+      }
+
+      function render() {
+        const shown = Math.min(S.k, S.y + 1);
+        const now = nowLine();
+        let html = "";
+        for (let i = 1; i <= shown; i++) {
+          const indent = (i - 1) * 1.6;
+          html += `<div class="ln${i === now ? " now" : ""}" style="margin-left:${indent}em">${lineHtml(i)}</div>`;
+        }
+        $("routine").innerHTML = html;
+        $("status").textContent = status();
+        $("phase").textContent =
+          S.k <= S.y ? "Descida" : S.k === S.y + 1 ? "Caso base" : "Subida";
+        const done = S.k === total();
+        $("out").innerHTML = done
+          ? `<div class="ans">soma(${S.x}, ${S.y}) = ${S.x + S.y}, com ${S.y} ${S.y === 1 ? "aperto" : "apertos"} de +1 a partir de ${S.x}.</div>`
+          : "";
+        $("bStep").disabled = done;
+        $("bAll").disabled = done;
+        mark();
+      }
+
+      function reset() {
+        S.x = clamp($("x").value, 20);
+        S.y = clamp($("y").value, 12);
+        $("x").value = S.x;
+        $("y").value = S.y;
+        S.k = 0;
+        render();
+      }
+
+      $("bStep").onclick = () => {
+        S.k = Math.min(S.k + 1, total());
+        render();
+      };
+      $("bAll").onclick = () => {
+        S.k = total();
+        render();
+      };
+      $("bReset").onclick = reset;
+      $("x").onchange = reset;
+      $("y").onchange = reset;
+      reset();
+    </script>
+  </body>
+</html>

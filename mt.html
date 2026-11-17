@@ -1,0 +1,751 @@
+<!doctype html>
+<!-- Simulador de uma Máquina de Turing que soma números em unário (11+1 vira 111). Material interativo do Trabalho Final de Teoria da Computação (AL0349), com a notação da Aula 16: ⊛, β, E, D e Π. -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Máquina de Turing que soma | Teoria da Computação</title>
+    <style>
+      :root {
+        --ink: #1f2433;
+        --muted: #5f6675;
+        --paper: #fffdf7;
+        --line: #1f2433;
+        --coral: #ff6b57;
+        --coral-bg: #ffe3dd;
+        --sun: #ffc531;
+        --sun-bg: #fff3c7;
+        --teal: #15a39a;
+        --teal-bg: #d4f3ef;
+        --grape: #7b4fd6;
+        --grape-bg: #e9dffb;
+        --sky: #2f80ed;
+        --sky-bg: #dbe9ff;
+        --leaf: #2e9e4f;
+        --leaf-bg: #dcf5e3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        font:
+          17px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 18px 80px;
+      }
+      header {
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 22px 24px;
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--teal);
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+        margin: 40px 0 12px;
+        line-height: 1.2;
+      }
+      p {
+        margin: 0 0 12px;
+      }
+      .card {
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: #fff;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .card.sun {
+        background: var(--sun-bg);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 10px 0;
+        background: #fff;
+        font-size: 0.95rem;
+      }
+      th,
+      td {
+        border: 2px solid var(--line);
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--sun-bg);
+      }
+      td.c {
+        text-align: center;
+        font-family: Georgia, serif;
+        font-size: 1.05rem;
+      }
+      tr.hit td {
+        background: var(--sun);
+        font-weight: 800;
+      }
+      .why {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--sun);
+        background: var(--sun-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 10px 0;
+      }
+      .ans {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--leaf);
+        background: var(--leaf-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 12px 0 6px;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .check {
+        border: 2px solid var(--line);
+        border-left: 10px solid var(--coral);
+        background: var(--coral-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 8px 0;
+      }
+      .say {
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 8px 0;
+        background: var(--paper);
+      }
+      .steps {
+        counter-reset: s;
+        padding: 0;
+        margin: 10px 0;
+        list-style: none;
+      }
+      .steps li {
+        counter-increment: s;
+        position: relative;
+        padding: 6px 0 6px 44px;
+        margin: 4px 0;
+      }
+      .steps li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--line);
+        border-radius: 50%;
+        background: var(--sun);
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      footer {
+        margin-top: 50px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        border-top: 2px solid var(--line);
+        padding-top: 12px;
+      }
+      /* simulador */
+      .sim {
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 8px 8px 0 var(--sky);
+        padding: 16px 18px;
+        margin: 26px 0;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 12px;
+      }
+      label b {
+        margin-right: 6px;
+      }
+      input[type="text"] {
+        font:
+          1.15rem Georgia,
+          serif;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 10px;
+        width: 9em;
+        background: var(--paper);
+      }
+      button {
+        font: inherit;
+        font-weight: 800;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 14px;
+        background: #fff;
+        box-shadow: 3px 3px 0 var(--line);
+        cursor: pointer;
+        color: var(--ink);
+      }
+      button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0 var(--line);
+      }
+      button.main {
+        background: var(--sun);
+      }
+      button.ex {
+        font-family: Georgia, serif;
+        font-weight: 400;
+        padding: 2px 10px;
+        box-shadow: none;
+        background: var(--sun-bg);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .mode {
+        display: inline-flex;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .mode button {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        font-weight: 700;
+      }
+      .mode button + button {
+        border-left: 2px solid var(--line);
+      }
+      .mode button[aria-pressed="true"] {
+        background: var(--sky-bg);
+      }
+      .tape {
+        display: flex;
+        overflow-x: auto;
+        padding: 34px 2px 8px;
+        margin: 6px 0 4px;
+      }
+      .cell {
+        position: relative;
+        flex: 0 0 44px;
+        height: 44px;
+        border: 2px solid var(--line);
+        margin-left: -2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font:
+          1.25rem Georgia,
+          serif;
+        background: #fff;
+      }
+      .cell:first-child {
+        margin-left: 0;
+      }
+      .cell.blank {
+        color: var(--muted);
+      }
+      .cell.cur {
+        background: var(--sun);
+        font-weight: 800;
+      }
+      .cell.cur::before {
+        content: attr(data-q);
+        position: absolute;
+        top: -32px;
+        left: 50%;
+        transform: translateX(-50%);
+        font:
+          700 0.9rem Georgia,
+          serif;
+        color: #fff;
+        background: var(--coral);
+        border: 2px solid var(--line);
+        border-radius: 6px;
+        padding: 0 6px;
+        white-space: nowrap;
+      }
+      .status {
+        font-family: Georgia, serif;
+        font-size: 1.05rem;
+        margin: 8px 0 0;
+      }
+      svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      svg text {
+        font-family: Georgia, serif;
+        font-size: 15px;
+        fill: var(--ink);
+      }
+      svg .st circle {
+        fill: #fff;
+        stroke: var(--line);
+        stroke-width: 2.5;
+      }
+      svg .st.on circle {
+        fill: var(--sun);
+      }
+      svg .st text {
+        font-weight: 700;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      svg path {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 2;
+      }
+      svg .loopr path,
+      svg .loopr text {
+        stroke: var(--coral);
+      }
+      svg .loopr text {
+        fill: var(--coral);
+        stroke: none;
+        font-weight: 700;
+      }
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.6rem;
+        }
+        .cell {
+          flex-basis: 38px;
+          height: 38px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Máquina de Turing que soma em unário</h1>
+        <p class="lead">
+          Digite uma soma como 11+1 (que é 2 + 1), aperte Passo ou Rodar e
+          acompanhe a cabeça na fita. A notação segue a Aula 16: ⊛ marca o
+          início da fita, β é a célula vazia, E e D são esquerda e direita, e Π
+          é a função de transição.
+        </p>
+      </header>
+
+      <h2>Como a máquina pensa</h2>
+      <div class="card sun">
+        <ol class="steps">
+          <li>
+            <b>Começa em q0, com a cabeça no ⊛.</b> A regra 1 só sai do
+            marcador.
+          </li>
+          <li>
+            <b>Em q1, passa pelos 1 até achar o +.</b> Troca o + por 1. Agora
+            11+1 virou 1111, com um 1 a mais.
+          </li>
+          <li>
+            <b>Em q2, anda até o primeiro β e volta uma célula.</b> Em q3, apaga
+            esse último 1 e chega ao estado final qf. Sobra 111, que é 3.
+          </li>
+        </ol>
+      </div>
+
+      <section class="sim" aria-label="Simulador">
+        <div class="row">
+          <label
+            ><b>Entrada</b
+            ><input
+              id="inp"
+              type="text"
+              value="11+1"
+              spellcheck="false"
+              autocomplete="off"
+          /></label>
+          <button class="ex" data-w="11+1">11+1</button>
+          <button class="ex" data-w="111+11">111+11</button>
+          <button class="ex" data-w="111">111 (sem +)</button>
+        </div>
+        <div class="row">
+          <span class="mode" role="group" aria-label="Versão da máquina">
+            <button id="mDec" aria-pressed="true">Decide</button>
+            <button id="mRec" aria-pressed="false">Reconhece</button>
+          </span>
+          <button id="bStep" class="main">Passo</button>
+          <button id="bRun" class="main">Rodar</button>
+          <button id="bReset">Reiniciar</button>
+        </div>
+        <div class="tape" id="tape" aria-label="Fita"></div>
+        <p class="status" id="status" aria-live="polite"></p>
+        <div id="out" aria-live="polite"></div>
+      </section>
+
+      <h2>Diagrama de estados</h2>
+      <p>
+        Cada seta mostra <i>lido/escrito,movimento</i>. O estado atual fica
+        amarelo. O círculo duplo é o estado final.
+      </p>
+      <div class="card">
+        <svg
+          viewBox="0 0 700 200"
+          role="img"
+          aria-label="Diagrama: q0 vai a q1 lendo ⊛, q1 repete lendo 1 e vai a q2 lendo +, q2 repete lendo 1 e vai a q3 lendo β, q3 vai a qf lendo 1"
+        >
+          <defs>
+            <marker
+              id="ar"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path
+                d="M0 0 L10 5 L0 10"
+                style="fill: none; stroke: #1f2433; stroke-width: 2"
+              />
+            </marker>
+            <marker
+              id="arc"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path
+                d="M0 0 L10 5 L0 10"
+                style="fill: none; stroke: #ff6b57; stroke-width: 2"
+              />
+            </marker>
+          </defs>
+          <path d="M10 120 H56" marker-end="url(#ar)" />
+          <text x="12" y="108">início</text>
+          <path d="M104 120 H194" marker-end="url(#ar)" />
+          <text x="118" y="110">⊛/⊛,D</text>
+          <path d="M244 120 H354" marker-end="url(#ar)" />
+          <text x="276" y="110">+/1,D</text>
+          <path d="M404 120 H494" marker-end="url(#ar)" />
+          <text x="424" y="110">β/β,E</text>
+          <path d="M544 120 H614" marker-end="url(#ar)" />
+          <text x="556" y="110">1/β,E</text>
+          <path d="M208 100 C185 40 255 40 232 100" marker-end="url(#ar)" />
+          <text x="198" y="44">1/1,D</text>
+          <path d="M368 100 C345 40 415 40 392 100" marker-end="url(#ar)" />
+          <text x="358" y="44">1/1,D</text>
+          <g class="loopr" id="loopEdge" hidden>
+            <path
+              d="M200 140 C170 190 270 190 240 140"
+              marker-end="url(#arc)"
+            />
+            <text x="196" y="172">β/β,D</text>
+          </g>
+          <g class="st" data-q="q0">
+            <circle cx="80" cy="120" r="24" />
+            <text x="80" y="120">q0</text>
+          </g>
+          <g class="st" data-q="q1">
+            <circle cx="220" cy="120" r="24" />
+            <text x="220" y="120">q1</text>
+          </g>
+          <g class="st" data-q="q2">
+            <circle cx="380" cy="120" r="24" />
+            <text x="380" y="120">q2</text>
+          </g>
+          <g class="st" data-q="q3">
+            <circle cx="520" cy="120" r="24" />
+            <text x="520" y="120">q3</text>
+          </g>
+          <g class="st" data-q="qf">
+            <circle cx="640" cy="120" r="24" />
+            <circle cx="640" cy="120" r="19" style="fill: none" />
+            <text x="640" y="120">qf</text>
+          </g>
+        </svg>
+      </div>
+
+      <h2>Regras da função de transição Π</h2>
+      <p>A linha da regra usada no último passo fica amarela.</p>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Regra</th>
+              <th>Estado</th>
+              <th>Lê</th>
+              <th>Escreve</th>
+              <th>Move</th>
+              <th>Vai para</th>
+              <th>O que a regra faz</th>
+            </tr>
+          </thead>
+          <tbody id="rules"></tbody>
+        </table>
+      </div>
+
+      <h2>Decidir ou reconhecer</h2>
+      <div class="why">
+        <b>Decide:</b> com 111 (sem +), a máquina chega ao β em q1 e não tem
+        regra para isso, então para e rejeita. Ela sempre para, com sim ou com
+        não.
+      </div>
+      <div class="check">
+        <b>Reconhece:</b> o botão acrescenta a regra 7, Π(q1, β) = (q1, β, D).
+        Com 111, a cabeça anda para a direita para sempre. A máquina ainda
+        aceita toda soma válida, mas, com uma palavra fora da linguagem, ela
+        pode entrar em loop.
+      </div>
+      <div class="say">
+        <b>E o Problema da Parada?</b> Na versão que reconhece, o simulador
+        desiste depois de 40 passos além do tamanho da entrada. Um limite assim
+        falha em geral, porque, para qualquer limite escolhido, existe um
+        programa que para logo depois dele (Aula 16). Nenhuma máquina decide
+        PARADA.
+      </div>
+
+      <footer>
+        Fonte: Texto-Aula 16 (Máquinas de Turing, Computabilidade e
+        Indecidibilidade), Teoria da Computação (AL0349), Prof. Dr. Paulo Silas
+        Severo de Souza, Unipampa, 2026/2. A máquina de soma foi montada para o
+        Trabalho Final por Amanda Dias (2510101045).
+      </footer>
+    </div>
+
+    <script>
+      // Regras da MT. "rec" marca a regra que só existe na versão que reconhece.
+      const RULES = [
+        {
+          id: 1,
+          q: "q0",
+          r: "⊛",
+          w: "⊛",
+          m: "D",
+          n: "q1",
+          txt: "sai do marcador",
+        },
+        {
+          id: 2,
+          q: "q1",
+          r: "1",
+          w: "1",
+          m: "D",
+          n: "q1",
+          txt: "passa pelos 1 do primeiro número",
+        },
+        {
+          id: 3,
+          q: "q1",
+          r: "+",
+          w: "1",
+          m: "D",
+          n: "q2",
+          txt: "troca o + por 1 e junta os números",
+        },
+        {
+          id: 4,
+          q: "q2",
+          r: "1",
+          w: "1",
+          m: "D",
+          n: "q2",
+          txt: "passa pelos 1 do segundo número",
+        },
+        {
+          id: 5,
+          q: "q2",
+          r: "β",
+          w: "β",
+          m: "E",
+          n: "q3",
+          txt: "achou o fim e volta uma célula",
+        },
+        {
+          id: 6,
+          q: "q3",
+          r: "1",
+          w: "β",
+          m: "E",
+          n: "qf",
+          txt: "apaga o 1 que sobrou",
+        },
+        {
+          id: 7,
+          q: "q1",
+          r: "β",
+          w: "β",
+          m: "D",
+          n: "q1",
+          txt: "sem +, anda para a direita para sempre",
+          rec: true,
+        },
+      ];
+      const FINAL = "qf";
+      const EXTRA = 40;
+      const $ = (id) => document.getElementById(id);
+      const M = {
+        tape: [],
+        inLen: 0,
+        pos: 0,
+        q: "q0",
+        steps: 0,
+        done: null,
+        last: null,
+        rec: false,
+        timer: null,
+      };
+
+      function active(r) {
+        return !r.rec || M.rec;
+      }
+
+      function reset() {
+        stop();
+        const w = $("inp").value.replace(/\s/g, "");
+        M.tape = ["⊛", ...w, "β", "β", "β"];
+        M.inLen = w.length;
+        M.pos = 0;
+        M.q = "q0";
+        M.steps = 0;
+        M.last = null;
+        M.done = /^[1+]*$/.test(w) ? null : "bad";
+        render();
+      }
+
+      function step() {
+        if (M.done) return;
+        const sym = M.tape[M.pos];
+        const rule = RULES.find((r) => active(r) && r.q === M.q && r.r === sym);
+        if (!rule) {
+          M.done = "rej";
+          return render();
+        }
+        M.tape[M.pos] = rule.w;
+        M.pos += rule.m === "D" ? 1 : -1;
+        M.q = rule.n;
+        M.steps += 1;
+        M.last = rule;
+        if (M.pos < 0) M.done = "left";
+        else if (M.q === FINAL) M.done = "acc";
+        else if (M.rec && M.steps >= M.inLen + EXTRA) M.done = "limit";
+        while (M.tape.length < M.pos + 3) M.tape.push("β");
+        render();
+      }
+
+      function run() {
+        if (M.timer) return stop();
+        if (M.done) reset();
+        $("bRun").textContent = "Pausar";
+        M.timer = setInterval(() => {
+          step();
+          if (M.done) stop();
+        }, 380);
+      }
+
+      function stop() {
+        clearInterval(M.timer);
+        M.timer = null;
+        $("bRun").textContent = "Rodar";
+      }
+
+      function ruleText(r) {
+        return `regra ${r.id}: Π(${r.q}, ${r.r}) = (${r.n}, ${r.w}, ${r.m})`;
+      }
+
+      function result() {
+        const ones = M.tape.filter((s) => s === "1").length;
+        const word = M.tape.filter((s) => s === "1").join("");
+        const msg = {
+          acc: `<div class="ans">Aceita em ${M.steps} passos. A fita ficou com ${word || "nenhum 1"}, que é ${ones}.</div>`,
+          rej: `<div class="check"><b>Rejeita.</b> Em ${M.q}, lendo ${M.tape[M.pos]}, não há regra, então a máquina para e responde não.</div>`,
+          left: `<div class="check"><b>Rejeita.</b> A cabeça saiu da fita pela esquerda.</div>`,
+          limit: `<div class="check"><b>Entrou em loop.</b> Já são ${M.steps} passos e a regra 7 continua mandando a cabeça para a direita. A máquina nunca para sozinha, então o simulador desistiu.</div>`,
+          bad: `<div class="check"><b>Entrada fora do alfabeto.</b> Use só 1 e +, como 11+1.</div>`,
+        };
+        return M.done ? msg[M.done] : "";
+      }
+
+      function render() {
+        $("tape").innerHTML = M.tape
+          .map(
+            (s, i) =>
+              `<div class="cell${s === "β" ? " blank" : ""}${i === M.pos && M.done !== "bad" ? " cur" : ""}" data-q="${M.q}">${s}</div>`,
+          )
+          .join("");
+        const cur = $("tape").querySelector(".cur");
+        if (cur) cur.scrollIntoView({ block: "nearest", inline: "center" });
+        $("status").textContent =
+          M.done === "bad"
+            ? ""
+            : `Passo ${M.steps} · estado ${M.q} · lendo ${M.tape[M.pos] ?? "fora da fita"}` +
+              (M.last ? ` · usou a ${ruleText(M.last)}` : "");
+        $("out").innerHTML = result();
+        document
+          .querySelectorAll(".st")
+          .forEach((g) => g.classList.toggle("on", g.dataset.q === M.q));
+        $("rules").innerHTML = RULES.filter(active)
+          .map(
+            (r) =>
+              `<tr class="${M.last && M.last.id === r.id ? "hit" : ""}"><td class="c">${r.id}</td><td class="c">${r.q}</td><td class="c">${r.r}</td><td class="c">${r.w}</td><td class="c">${r.m}</td><td class="c">${r.n}</td><td>${r.txt}</td></tr>`,
+          )
+          .join("");
+        $("loopEdge").toggleAttribute("hidden", !M.rec);
+        $("bStep").disabled = !!M.done;
+      }
+
+      function setMode(rec) {
+        M.rec = rec;
+        $("mDec").setAttribute("aria-pressed", String(!rec));
+        $("mRec").setAttribute("aria-pressed", String(rec));
+        reset();
+      }
+
+      $("bStep").onclick = () => {
+        stop();
+        step();
+      };
+      $("bRun").onclick = run;
+      $("bReset").onclick = reset;
+      $("inp").oninput = reset;
+      $("mDec").onclick = () => setMode(false);
+      $("mRec").onclick = () => setMode(true);
+      document.querySelectorAll("button.ex").forEach((b) => {
+        b.onclick = () => {
+          $("inp").value = b.dataset.w;
+          reset();
+        };
+      });
+      reset();
+    </script>
+  </body>
+</html>
